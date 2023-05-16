@@ -39,8 +39,12 @@ class AuthController extends Controller
 
     public function login(Request $request): JsonResponse
     {
+        // return response()->json([
+        //     'data' => $user = User::where('email', $request->email)->first()
+        // ]);
+        
         $request->validate([
-            'email' => 'required|string',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -86,7 +90,7 @@ class AuthController extends Controller
                 return response()->json(['success' => false, 'errors' => $object], 422);
             }
             if ($user->two_factor_verified_at != null && $user->two_factor_code === null) {
-                return new JsonResponse(['success' => true, 'messeeage' => 'Email already verified.']);
+                return new JsonResponse(['success' => true, 'message' => 'Email already verified.']);
             }
 
             //check expiry date of verification code
