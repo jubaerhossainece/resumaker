@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\cv;
+namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

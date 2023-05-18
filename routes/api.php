@@ -40,6 +40,36 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/profile', [ProfileController::class, 'updateProfile']);
         Route::post('/change-password', [ProfileController::class, 'changePassword']);
         /* =========end user profile api========== */
+        
+        /*===============================*/
+        /*=========== CV Apis ===========*/
+        /*===============================*/
+        Route::get('/cv/{id}', [CvController::class, 'show']);
+
+        /*=========== personal info api =================*/
+        Route::get('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'get']);
+        Route::post('cv/personal-info', [Cv\PersonalInfoController::class, 'store']);
+        Route::put('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'update']);
+
+        /*=========== experience api =================*/
+        Route::get('cv/{id}/experience', [Cv\ExperienceController::class, 'get']);
+        Route::post('cv/{id}/experience', [Cv\ExperienceController::class, 'save']);
+
+
+        /*=========== education api =================*/
+        Route::get('cv/{id}/education', [Cv\EducationController::class, 'get']);
+        Route::post('cv/{id}/education', [Cv\EducationController::class, 'save']);
+
+
+        /*=========== skill api =================*/
+        Route::get('cv/{id}/skill', [Cv\SkillController::class, 'get']);
+        Route::post('cv/{id}/skill', [Cv\SkillController::class, 'save']);
+
+
+        /*=========== certification api =================*/
+        Route::get('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'get']);
+        Route::post('cv/{id}/certification', [Cv\CertificationController::class, 'save']);
+        Route::put('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'update']);
 
     });
 
