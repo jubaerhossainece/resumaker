@@ -11,6 +11,8 @@ class SkillController extends Controller
 {
     public function get($id)
     {
+        return $certifications = CvUser::where('skills->skill', "HTML")->select('id')->get();
+        
         $user = auth()->user();
 
         $personal_info = CvUser::where([

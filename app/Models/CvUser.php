@@ -9,11 +9,13 @@ class CvUser extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+    
     protected $casts = [
         'personal_info' => 'array',
         'experience' => 'array',
         'education' => 'array',
         'skills' => 'array',
-        // 'certifications' => 'array',
+        'certifications' => 'array',
     ];
 }

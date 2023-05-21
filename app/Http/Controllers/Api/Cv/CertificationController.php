@@ -13,16 +13,8 @@ class CertificationController extends Controller
     public function get($id, $certification)
     {
         $user = auth()->user();
-        // return $certifications = CvUser::where('id', $id)->get();
-        // $certifications = DB::table('cv_users')->whereJsonContains('certifications', ['id' => $certification])->select('certifications')->first();
-        $certifications = DB::table('cv_users')->where('certifications->id', $certification)->select('certifications')->first();
-        return json_decode($certifications->certifications);
-
-        $certifications = CvUser::where([
-            'id' => $id,
-            'user_id' => $user->id,
-            'certifications->id' => $certification
-        ])->select('education', 'user_id', 'id')->first();
+        
+        $certifications = CvUser::where(['id' => $id])->select('certifications')->first();
 
         return successResponseJson($certifications);
 
@@ -45,13 +37,11 @@ class CertificationController extends Controller
             'id' => $id,
             'user_id' => $user->id,
         ])->first();
-        // return gettype($cv->certifications);
         
         if($cv){
             $cv->user_id = $user->id;
 
             $certification = new stdClass;
-            $certification->id = uniqid();
             $certification->name = $request->name;
             $certification->issuing_org = $request->issuing_org;
             $certification->credential_url = $request->credential_url;
@@ -59,18 +49,23 @@ class CertificationController extends Controller
             $certification->exp_date = $request->exp_date;
             $certification->is_no_exp = $request->is_no_exp;
 
-            $prev_data = json_decode($cv->certifications) ?? new stdClass;
-            $new_data = $certification;
+            $id = uniqid();
+            if(is_null($cv->certifications)){
+                $arr = array();
+                $arr[$id] = $certification;
 
-            $cv->certifications = json_encode((object)array_merge((array)$prev_data, (array)$new_data));
-            $cv->save();
-            // if(is_null($cv->certifications)){
-            //     $cv->certifications[uniqid()] = $certification;
-            // }else{
-            //     $cv->certifications[uniqid()] = $certification;
-            //     array_merge();
-            // }
-            return $cv->certifications;
+                $cv->certifications = $arr;
+
+                $cv->save();
+            }else{
+                
+                $arr = array();
+                $arr[$id] = $certification;
+                
+                $new_array = array_merge($cv->certifications, $arr);
+                $cv->certifications = $new_array;
+                $cv->save();
+            }
             return successResponseJson($cv, 'Your certification information saved in database');
         }else{
             return errorResponseJson('No cv found with this id.', 422);
@@ -78,7 +73,7 @@ class CertificationController extends Controller
     }
 
 
-    public function update(Request $request, $id, $certification)
+    public function update(Request $request, $id, $cert_key)
     {
         $request->validate([
             'name' => 'required|string',
@@ -88,11 +83,10 @@ class CertificationController extends Controller
             'exp_date' => 'required|date',
             'is_no_exp' => 'required|boolean',
         ]);
-        
-        // $cv = DB::table('cv_users')->where('certifications->id', $certification)->update('certifications')->first();
+
+        $cv = CvUser::find($id);
         
         if($cv){
-
             $certification = new stdClass;
             $certification->name = $request->name;
             $certification->issuing_org = $request->issuing_org;
@@ -100,17 +94,14 @@ class CertificationController extends Controller
             $certification->issue_date = $request->issue_date;
             $certification->exp_date = $request->exp_date;
             $certification->is_no_exp = $request->is_no_exp;
+
+            $certifications = $cv->certifications;
+            $certifications[$cert_key] = $certification;
             
-            $prev_data = $cv->certifications ?? [];
-            $new_data = [
-                $certification => $certification
-            ];
-            $merged_data = array_merge($prev_data, $new_data);
-            $cv->certifications = $merged_data;
+            $cv->certifications = $certifications;
             $cv->save();
-            return $cv->certification;
     
-            return successResponseJson($cv, 'Your certification information saved in database');
+            return successResponseJson($cv->certifications, 'Your certification information saved in database');
         }else{
             return errorResponseJson('No cv found with this id.', 422);
         }
