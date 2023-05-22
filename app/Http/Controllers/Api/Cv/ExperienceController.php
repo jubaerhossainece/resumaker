@@ -13,19 +13,22 @@ class ExperienceController extends Controller
     {
         $user = auth()->user();
 
-        $personal_info = CvUser::where([
+        $cv = CvUser::where([
             'id' => $id,
             'user_id' => $user->id,
-        ])->select('personal_info', 'user_id', 'id')->first();
+        ])->select('experience', 'user_id', 'id')->first();
 
-        return successResponseJson($personal_info);
+        if($cv){
+            return successResponseJson($cv->experience);
+        }else{
+            return errorResponseJson('No cv found.', 422);
+        }
 
     }
 
 
     public function save(Request $request, $id)
     {
-        
         $request->validate([
             'organization' => 'required|string',
             'job_title' => 'required|string',
@@ -43,9 +46,6 @@ class ExperienceController extends Controller
         ])->first();
         
         if($cv){
-
-            $cv->user_id = $user->id;
-
             $experience = new stdClass;
             $experience->organization = $request->organization;
             $experience->job_title = $request->job_title;
@@ -54,48 +54,75 @@ class ExperienceController extends Controller
             $experience->end_date = $request->end_date;
             $experience->city = $request->city;
             $experience->country = $request->country;
+
+            $id = uniqid();
+            if(is_null($cv->experience)){
+                $arr = array();
+                $arr[$id] = $experience;
+                $cv->experience = $arr;
+                $cv->save();
+            }else{
+                $arr = array();
+                $arr[$id] = $experience;
+                
+                $new_array = array_merge($cv->experience, $arr);
+                $cv->experience = $new_array;
+                $cv->save();
+            }
     
-            $cv->experience = $experience;
-            $cv->save();
-    
-            return successResponseJson($cv, 'Your experience information saved in database');
+            return successResponseJson($cv->experience, 'Your experience information saved in database');
         }else{
             return errorResponseJson('No cv found with this id.', 422);
         }
     }
 
 
-    // public function update(Request $request)
-    // {
-    //     $request->validate([
-    //         'organization' => 'required|string',
-    //         'job_title' => 'required|string',
-    //         'responsibilities_achievements' => 'required|string',
-    //         'start_date' => 'required|date',
-    //         'end_date' => 'required|date',
-    //         'city' => 'required|string',
-    //         'country' => 'required|string',
-    //     ]);
+    public function update(Request $request, $id, $exp_key)
+    {
+        $request->validate([
+            'organization' => 'required|string',
+            'job_title' => 'required|string',
+            'responsibilities_achievements' => 'required|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'city' => 'required|string',
+            'country' => 'required|string',
+        ]);
 
-    //     $user = auth()->user();
-    //     $cv = new CvUser();
-    //     $cv->user_id = $user->id;
-    //     $personal_info = new stdClass;
-    //     $personal_info->first_name = $request->first_name;
-    //     $personal_info->last_name = $request->last_name;
-    //     $personal_info->email = $request->email;
-    //     $personal_info->phone = $request->phone;
-    //     $personal_info->profession = $request->profession;
-    //     $personal_info->city = $request->city;
-    //     $personal_info->country = $request->country;
-    //     $personal_info->post_code = $request->post_code;
-    //     $personal_info->about = $request->about;
-    //     $personal_info->social_links = $request->social_links;
+        $cv = CvUser::where('id', $id)->first();
+        if($cv){
+            $experience = new stdClass;
+            $experience->organization = $request->organization;
+            $experience->job_title = $request->job_title;
+            $experience->responsibilities_achievements = $request->responsibilities_achievements;
+            $experience->start_date = $request->start_date;
+            $experience->end_date = $request->end_date;
+            $experience->city = $request->city;
+            $experience->country = $request->country;
 
-    //     $cv->personal_info = $personal_info;
-    //     $cv->save();
+            $experience_list = $cv->experience;
+            $experience_list[$exp_key] = $experience;
+            $cv->experience = $experience_list;
+            $cv->save();
 
-    //     return successResponseJson($cv, 'Your personal information updated');
+            return successResponseJson($cv->experience, 'Your experience information updated');
+        }else{
+            return errorResponseJson('CV not found.', 422);
+        }
+    }
 
-    // }
+    public function destroy($id, $exp_key)
+    {
+        $cv = CvUser::where('id', $id)->first();
+        
+        if($cv){
+            $experience_list = $cv->experience;
+            unset($experience_list[$exp_key]);
+            $cv->experience = $experience_list;
+            $cv->save();
+            return successResponseJson($cv->experience, 'Your experience information deleted');
+        }else{
+            return errorResponseJson('CV not found.', 422);
+        }
+    }
 }

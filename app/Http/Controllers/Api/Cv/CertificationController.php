@@ -53,9 +53,7 @@ class CertificationController extends Controller
             if(is_null($cv->certifications)){
                 $arr = array();
                 $arr[$id] = $certification;
-
                 $cv->certifications = $arr;
-
                 $cv->save();
             }else{
                 
@@ -84,7 +82,7 @@ class CertificationController extends Controller
             'is_no_exp' => 'required|boolean',
         ]);
 
-        $cv = CvUser::find($id);
+        $cv = CvUser::where('id', $id)->select('certifications')->first();
         
         if($cv){
             $certification = new stdClass;
@@ -101,9 +99,25 @@ class CertificationController extends Controller
             $cv->certifications = $certifications;
             $cv->save();
     
-            return successResponseJson($cv->certifications, 'Your certification information saved in database');
+            return successResponseJson($cv->certifications, 'Your certification information updated in database');
         }else{
-            return errorResponseJson('No cv found with this id.', 422);
+            return errorResponseJson('CV not found.', 422);
+        }
+    }
+
+
+    public function destroy($id, $cert_key)
+    {
+        $cv = CvUser::where('id', $id)->first();
+        
+        if($cv){
+            $certifications = $cv->certifications;
+            unset($certifications[$cert_key]);
+            $cv->certifications = $certifications;
+            $cv->save();
+            return successResponseJson($cv->certifications, 'Your certification information deleted');
+        }else{
+            return errorResponseJson('This certification not found.', 422);
         }
     }
 }
