@@ -57,18 +57,15 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('cv/{id}/experience/{experience}', [Cv\ExperienceController::class, 'update']);
         Route::delete('cv/{id}/experience/{experience}', [Cv\ExperienceController::class, 'destroy']);
 
-
         /*=========== education api =================*/
         Route::get('cv/{id}/education', [Cv\EducationController::class, 'get']);
         Route::post('cv/{id}/education', [Cv\EducationController::class, 'save']);
         Route::put('cv/{id}/education/{education}', [Cv\EducationController::class, 'update']);
         Route::delete('cv/{id}/education/{education}', [Cv\EducationController::class, 'destroy']);
 
-
         /*=========== skill api =================*/
         Route::get('cv/{id}/skill', [Cv\SkillController::class, 'get']);
         Route::post('cv/{id}/skill', [Cv\SkillController::class, 'save']);
-
 
         /*=========== certification api =================*/
         Route::get('cv/{id}/certification', [Cv\CertificationController::class, 'get']);
@@ -76,12 +73,23 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'update']);
         Route::delete('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'destroy']);
 
-
         /*=========== award api =================*/
-        Route::get('cv/{id}/award', [Cv\AwardController::class, 'get']);
+        Route::get('cv/{id}/awards', [Cv\AwardController::class, 'get']);
         Route::post('cv/{id}/award', [Cv\AwardController::class, 'save']);
         Route::put('cv/{id}/award/{award}', [Cv\AwardController::class, 'update']);
         Route::delete('cv/{id}/award/{award}', [Cv\AwardController::class, 'destroy']);
+
+        /*=========== publications api =================*/
+        Route::get('cv/{id}/publications', [Cv\PublicationController::class, 'get']);
+        Route::post('cv/{id}/publication', [Cv\PublicationController::class, 'save']);
+        Route::put('cv/{id}/publication/{publication}', [Cv\PublicationController::class, 'update']);
+        Route::delete('cv/{id}/publication/{publication}', [Cv\PublicationController::class, 'destroy']);
+
+        /*=========== references api =================*/
+        Route::get('cv/{id}/references', [Cv\PublicationController::class, 'get']);
+        Route::post('cv/{id}/reference', [Cv\ReferenceController::class, 'save']);
+        Route::put('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'update']);
+        Route::delete('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'destroy']);
     });
 
 });

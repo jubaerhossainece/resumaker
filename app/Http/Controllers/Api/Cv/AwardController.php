@@ -14,27 +14,23 @@ class AwardController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->select('experience', 'user_id', 'id')->first();
+        ])->select('awards', 'user_id', 'id')->first();
 
         if($cv){
-            return successResponseJson($cv->experience);
+            return successResponseJson($cv->awards);
         }else{
             return errorResponseJson('No cv found.', 422);
         }
-
     }
 
 
     public function save(Request $request, $id)
     {
         $request->validate([
-            'organization' => 'required|string',
-            'job_title' => 'required|string',
-            'responsibilities_achievements' => 'required|string',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'city' => 'required|string',
-            'country' => 'required|string',
+            'award_name' => 'required|string',
+            'award_details' => 'required|string',
+            'awarded_by' => 'required|string',
+            'awarded_date' => 'required|date',
         ]);
         
         $cv = CvUser::where([
@@ -43,81 +39,79 @@ class AwardController extends Controller
         ])->first();
         
         if($cv){
-            $experience = new stdClass;
-            $experience->organization = $request->organization;
-            $experience->job_title = $request->job_title;
-            $experience->responsibilities_achievements = $request->responsibilities_achievements;
-            $experience->start_date = $request->start_date;
-            $experience->end_date = $request->end_date;
-            $experience->city = $request->city;
-            $experience->country = $request->country;
+            $award = new stdClass;
+            $award->award_name = $request->award_name;
+            $award->award_details = $request->award_details;
+            $award->awarded_by = $request->awarded_by;
+            $award->awarded_date = $request->awarded_date;
 
             $id = uniqid();
-            if(is_null($cv->experience)){
+            if(is_null($cv->awards)){
                 $arr = array();
-                $arr[$id] = $experience;
-                $cv->experience = $arr;
+                $arr[$id] = $award;
+                $cv->awards = $arr;
                 $cv->save();
             }else{
                 $arr = array();
-                $arr[$id] = $experience;
+                $arr[$id] = $award;
                 
-                $new_array = array_merge($cv->experience, $arr);
-                $cv->experience = $new_array;
+                $new_array = array_merge($cv->awards, $arr);
+                $cv->awards = $new_array;
                 $cv->save();
             }
     
-            return successResponseJson($cv->experience, 'Your experience information saved in database');
+            return successResponseJson($cv->awards, 'Your award information saved in database');
         }else{
             return errorResponseJson('No cv found with this id.', 422);
         }
     }
 
 
-    public function update(Request $request, $id, $exp_key)
+    public function update(Request $request, $id, $award_key)
     {
         $request->validate([
-            'organization' => 'required|string',
-            'job_title' => 'required|string',
-            'responsibilities_achievements' => 'required|string',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'city' => 'required|string',
-            'country' => 'required|string',
+            'award_name' => 'required|string',
+            'award_details' => 'required|string',
+            'awarded_by' => 'required|string',
+            'awarded_date' => 'required|date',
         ]);
+        
+        $cv = CvUser::where([
+            'id' => $id,
+            'user_id' => auth()->user()->id,
+        ])->first();
 
-        $cv = CvUser::where('id', $id)->first();
         if($cv){
-            $experience = new stdClass;
-            $experience->organization = $request->organization;
-            $experience->job_title = $request->job_title;
-            $experience->responsibilities_achievements = $request->responsibilities_achievements;
-            $experience->start_date = $request->start_date;
-            $experience->end_date = $request->end_date;
-            $experience->city = $request->city;
-            $experience->country = $request->country;
+            $award = new stdClass;
+            $award->award_name = $request->award_name;
+            $award->award_details = $request->award_details;
+            $award->awarded_by = $request->awarded_by;
+            $award->awarded_date = $request->awarded_date;
 
-            $experience_list = $cv->experience;
-            $experience_list[$exp_key] = $experience;
-            $cv->experience = $experience_list;
+            $award_list = $cv->awards;
+            $award_list[$award_key] = $award;
+            $cv->awards = $award_list;
             $cv->save();
 
-            return successResponseJson($cv->experience, 'Your experience information updated');
+            return successResponseJson($cv->awards, 'Your award information updated');
         }else{
             return errorResponseJson('CV not found.', 422);
         }
     }
 
-    public function destroy($id, $exp_key)
+    public function destroy($id, $award_key)
     {
-        $cv = CvUser::where('id', $id)->first();
+        $cv = CvUser::where([
+            'id' => $id,
+            'user_id' => auth()->user()->id,
+        ])->first();
         
         if($cv){
-            $experience_list = $cv->experience;
-            unset($experience_list[$exp_key]);
-            $cv->experience = $experience_list;
+            $award_list = $cv->awards;
+            unset($award_list[$award_key]);
+            $cv->awards = $award_list;
             $cv->save();
-            return successResponseJson($cv->experience, 'Your experience information deleted');
+            return successResponseJson($cv->awards, 'Your award information deleted');
         }else{
             return errorResponseJson('CV not found.', 422);
         }

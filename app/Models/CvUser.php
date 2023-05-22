@@ -17,5 +17,8 @@ class CvUser extends Model
         'education' => 'array',
         'skills' => 'array',
         'certifications' => 'array',
+        'awards' => 'array',
+        'publications' => 'array',
+        'references' => 'array',
     ];
 }
