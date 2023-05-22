@@ -10,14 +10,18 @@ use stdClass;
 
 class CertificationController extends Controller
 {
-    public function get($id, $certification)
+    public function get($id)
     {
-        $user = auth()->user();
-        
-        $certifications = CvUser::where(['id' => $id])->select('certifications')->first();
+        $cv = CvUser::where([
+            'id' => $id,
+            'user_id' => auth()->user()->id
+            ])->select('certifications')->first();
 
-        return successResponseJson($certifications);
-
+        if($cv){
+            return successResponseJson($cv->certifications);
+        }else{
+            return errorResponseJson('No CV found.', 422);
+        }
     }
 
 
@@ -32,15 +36,12 @@ class CertificationController extends Controller
             'is_no_exp' => 'required|boolean',
         ]);
         
-        $user = auth()->user();
         $cv = CvUser::where([
             'id' => $id,
-            'user_id' => $user->id,
+            'user_id' => auth()->user()->id,
         ])->first();
         
         if($cv){
-            $cv->user_id = $user->id;
-
             $certification = new stdClass;
             $certification->name = $request->name;
             $certification->issuing_org = $request->issuing_org;
@@ -82,7 +83,10 @@ class CertificationController extends Controller
             'is_no_exp' => 'required|boolean',
         ]);
 
-        $cv = CvUser::where('id', $id)->select('certifications')->first();
+        $cv = CvUser::where([
+            'id' => $id,
+            'user_id' => auth()->user()->id,
+        ])->first();
         
         if($cv){
             $certification = new stdClass;
@@ -108,7 +112,10 @@ class CertificationController extends Controller
 
     public function destroy($id, $cert_key)
     {
-        $cv = CvUser::where('id', $id)->first();
+        $cv = CvUser::where([
+            'id' => $id,
+            'user_id' => auth()->user()->id,
+        ])->first();
         
         if($cv){
             $certifications = $cv->certifications;
@@ -117,7 +124,7 @@ class CertificationController extends Controller
             $cv->save();
             return successResponseJson($cv->certifications, 'Your certification information deleted');
         }else{
-            return errorResponseJson('This certification not found.', 422);
+            return errorResponseJson('CV not found.', 422);
         }
     }
 }

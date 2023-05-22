@@ -11,11 +11,9 @@ class EducationController extends Controller
 {
     public function get($id)
     {
-        $user = auth()->user();
-
         $cv = CvUser::where([
             'id' => $id,
-            'user_id' => $user->id,
+            'user_id' => auth()->user()->id,
         ])->select('education', 'user_id', 'id')->first();
 
         if($cv){
@@ -40,11 +38,9 @@ class EducationController extends Controller
             'is_current' => 'required|boolean',
         ]);
         
-        $user = auth()->user();
-        
         $cv = CvUser::where([
             'id' => $id,
-            'user_id' => $user->id,
+            'user_id' => auth()->user()->id,
         ])->first();
         
         if($cv){
@@ -74,7 +70,7 @@ class EducationController extends Controller
             }
             return successResponseJson($cv->education, 'Your education information saved in database');
         }else{
-            return errorResponseJson('No cv found with this id.', 422);
+            return errorResponseJson('No cv found.', 422);
         }
     }
 
@@ -91,7 +87,10 @@ class EducationController extends Controller
             'is_current' => 'required|boolean',
         ]);
 
-        $cv = CvUser::where('id', $id)->first();
+        $cv = CvUser::where([
+            'id' => $id,
+            'user_id' => auth()->user()->id,
+        ])->first();
         
         if($cv){
             $education = new stdClass;
@@ -118,7 +117,10 @@ class EducationController extends Controller
 
     public function destroy($id, $edu_key)
     {
-        $cv = CvUser::where('id', $id)->first();
+        $cv = CvUser::where([
+            'id' => $id,
+            'user_id' => auth()->user()->id,
+        ])->first();
         
         if($cv){
             $education_list = $cv->education;

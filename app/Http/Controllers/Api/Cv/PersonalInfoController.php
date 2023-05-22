@@ -11,21 +11,21 @@ class PersonalInfoController extends Controller
 {
     public function get($id)
     {
-        $user = auth()->user();
-
-        $personal_info = CvUser::where([
+        $cv = CvUser::where([
             'id' => $id,
-            'user_id' => $user->id,
+            'user_id' => auth()->user()->id,
         ])->select('personal_info', 'user_id', 'id')->first();
 
-        return successResponseJson($personal_info);
-
+        if($cv){
+            return successResponseJson($cv->personal_info);
+        }else{
+            return errorResponseJson('No CV found.', 422);
+        }
     }
 
 
     public function store(Request $request)
     {
-        
         $request->validate([
             'first_name' => 'required|string',
             'last_name' => 'required|string',
@@ -40,11 +40,8 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
-        
-
-        $user = auth()->user();
         $cv = new CvUser();
-        $cv->user_id = $user->id;
+        $cv->user_id = auth()->user()->id;
         $cv->template_id = $request->template_id;
 
         $personal_info = new stdClass;
@@ -62,13 +59,12 @@ class PersonalInfoController extends Controller
         $cv->personal_info = $personal_info;
         $cv->save();
 
-        return successResponseJson($cv, 'Your personal information saved in database');
+        return successResponseJson($cv->personal_info, 'Your personal information saved in database');
     }
 
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        
         $request->validate([
             'first_name' => 'required|string',
             'last_name' => 'required|string',
@@ -80,30 +76,31 @@ class PersonalInfoController extends Controller
             'post_code' => 'required|string',
             'about' => 'required|string',
             'social_links' => 'required',
-            'template_id' => 'required',
         ]);
 
-        $user = auth()->user();
-        $cv = new CvUser();
-        $cv->user_id = $user->id;
-        $cv->template_id = $request->template_id;
+        $cv = CvUser::where([
+            'id' => $id,
+            'user_id' => auth()->user()->id,
+        ])->first();
         
-        $personal_info = new stdClass;
-        $personal_info->first_name = $request->first_name;
-        $personal_info->last_name = $request->last_name;
-        $personal_info->email = $request->email;
-        $personal_info->phone = $request->phone;
-        $personal_info->profession = $request->profession;
-        $personal_info->city = $request->city;
-        $personal_info->country = $request->country;
-        $personal_info->post_code = $request->post_code;
-        $personal_info->about = $request->about;
-        $personal_info->social_links = $request->social_links;
-        
-        $cv->personal_info = $personal_info;
-        $cv->save();
+        if($cv){
+            $personal_info = new stdClass;
+            $personal_info->first_name = $request->first_name;
+            $personal_info->last_name = $request->last_name;
+            $personal_info->email = $request->email;
+            $personal_info->phone = $request->phone;
+            $personal_info->profession = $request->profession;
+            $personal_info->city = $request->city;
+            $personal_info->country = $request->country;
+            $personal_info->post_code = $request->post_code;
+            $personal_info->about = $request->about;
+            $personal_info->social_links = $request->social_links;
 
-        return successResponseJson($cv, 'Your personal information updated');
-
+            $cv->personal_info = $personal_info;
+            $cv->save();
+            return successResponseJson($cv->personal_info, 'Your personal information updated');
+        }else{
+            return errorResponseJson('No CV found', 422);
+        }
     }
 }

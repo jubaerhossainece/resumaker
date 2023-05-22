@@ -11,11 +11,9 @@ class ExperienceController extends Controller
 {
     public function get($id)
     {
-        $user = auth()->user();
-
         $cv = CvUser::where([
             'id' => $id,
-            'user_id' => $user->id,
+            'user_id' => auth()->user()->id,
         ])->select('experience', 'user_id', 'id')->first();
 
         if($cv){
@@ -39,10 +37,9 @@ class ExperienceController extends Controller
             'country' => 'required|string',
         ]);
         
-        $user = auth()->user();
         $cv = CvUser::where([
             'id' => $id,
-            'user_id' => $user->id,
+            'user_id' => auth()->user()->id,
         ])->first();
         
         if($cv){

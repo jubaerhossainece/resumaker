@@ -71,11 +71,17 @@ Route::group(['prefix' => 'v1'], function () {
 
 
         /*=========== certification api =================*/
-        Route::get('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'get']);
+        Route::get('cv/{id}/certification', [Cv\CertificationController::class, 'get']);
         Route::post('cv/{id}/certification', [Cv\CertificationController::class, 'save']);
         Route::put('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'update']);
         Route::delete('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'destroy']);
 
+
+        /*=========== award api =================*/
+        Route::get('cv/{id}/award', [Cv\AwardController::class, 'get']);
+        Route::post('cv/{id}/award', [Cv\AwardController::class, 'save']);
+        Route::put('cv/{id}/award/{award}', [Cv\AwardController::class, 'update']);
+        Route::delete('cv/{id}/award/{award}', [Cv\AwardController::class, 'destroy']);
     });
 
 });
