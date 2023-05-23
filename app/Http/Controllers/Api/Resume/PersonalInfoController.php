@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api\Cv;
+namespace App\Http\Controllers\Api\Resume;
 
 use App\Http\Controllers\Controller;
-use App\Models\CvUser;
+use App\Models\ResumeUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
@@ -12,14 +12,14 @@ class PersonalInfoController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where([
+        $cv = ResumeUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
         ])->select('personal_info', 'user_id', 'id')->first();
 
-        if($cv){
+        if ($cv) {
             return successResponseJson($cv->personal_info);
-        }else{
+        } else {
             return errorResponseJson('No CV found.', 422);
         }
     }
@@ -42,11 +42,12 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
-        $cv = new CvUser();
+        $cv = new ResumeUser();
         $cv->user_id = auth()->user()->id;
         $cv->template_id = $request->template_id;
 
         $personal_info = new stdClass;
+        $personal_info->image = $request->image;
         $personal_info->first_name = $request->first_name;
         $personal_info->last_name = $request->last_name;
         $personal_info->email = $request->email;
@@ -57,9 +58,9 @@ class PersonalInfoController extends Controller
         $personal_info->post_code = $request->post_code;
         $personal_info->about = $request->about;
         $personal_info->social_links = $request->social_links;
-
+        
         if ($request->hasFile('image')) {
-            $path = 'public/cv/userImage';
+            $path = 'public/resume/userImage';
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $filename_with_ext = time() . '.' . $extension;
@@ -90,13 +91,14 @@ class PersonalInfoController extends Controller
             'social_links' => 'required',
         ]);
 
-        $cv = CvUser::where([
+        $cv = ResumeUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
         ])->first();
-        
-        if($cv){
+
+        if ($cv) {
             $personal_info = new stdClass;
+            $personal_info->image = $request->image;
             $personal_info->first_name = $request->first_name;
             $personal_info->last_name = $request->last_name;
             $personal_info->email = $request->email;
@@ -109,7 +111,7 @@ class PersonalInfoController extends Controller
             $personal_info->social_links = $request->social_links;
 
             if ($request->hasFile('image')) {
-                $path = 'public/cv/userImage';
+                $path = 'public/resume/userImage';
                 $file = $request->file('image');
                 $extension = $file->getClientOriginalExtension();
                 $filename_with_ext = time() . '.' . $extension;
@@ -123,7 +125,7 @@ class PersonalInfoController extends Controller
             $cv->personal_info = $personal_info;
             $cv->save();
             return successResponseJson($cv->personal_info, 'Your personal information updated');
-        }else{
+        } else {
             return errorResponseJson('No CV found', 422);
         }
     }

@@ -12,13 +12,13 @@ class CvUser extends Model
     protected $guarded = ['id'];
     
     protected $casts = [
-        'personal_info' => 'array',
-        'experience' => 'array',
-        'education' => 'array',
-        'skills' => 'array',
-        'certifications' => 'array',
-        'awards' => 'array',
-        'publications' => 'array',
-        'references' => 'array',
+        'personal_info' => 'object',
+        'experience' => 'object',
+        'education' => 'object',
+        'skills' => 'object',
+        'certifications' => 'object',
+        'awards' => 'object',
+        'publications' => 'object',
+        'references' => 'object',
     ];
 }

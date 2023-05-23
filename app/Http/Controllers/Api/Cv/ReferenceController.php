@@ -30,7 +30,7 @@ class ReferenceController extends Controller
             'name' => 'required|string',
             'current_organization' => 'required|string',
             'designation' => 'sometimes|string',
-            'number' => 'required|number',
+            'phone' => 'required|alpha_num',
             'email' => 'required|email',
         ]);
         
@@ -44,11 +44,11 @@ class ReferenceController extends Controller
             $reference->name = $request->name;
             $reference->current_organization = $request->current_organization;
             $reference->designation = $request->designation;
-            $reference->number = $request->number;
+            $reference->phone = $request->phone;
             $reference->email = $request->email;
 
             $id = uniqid();
-            if(is_null($cv->reference)){
+            if(is_null($cv->references)){
                 $arr = array();
                 $arr[$id] = $reference;
                 $cv->references = $arr;
@@ -75,7 +75,7 @@ class ReferenceController extends Controller
             'name' => 'required|string',
             'current_organization' => 'required|string',
             'designation' => 'sometimes|string',
-            'number' => 'required|number',
+            'phone' => 'required|alpha_num',
             'email' => 'required|email',
         ]);
         
@@ -89,7 +89,7 @@ class ReferenceController extends Controller
             $reference->name = $request->name;
             $reference->current_organization = $request->current_organization;
             $reference->designation = $request->designation;
-            $reference->number = $request->number;
+            $reference->phone = $request->phone;
             $reference->email = $request->email;
 
             $reference_list = $cv->references;
@@ -97,7 +97,7 @@ class ReferenceController extends Controller
             $cv->references = $reference_list;
             $cv->save();
 
-            return successResponseJson($cv->publications, 'Your reference information updated');
+            return successResponseJson($cv->references, 'Your reference information updated');
         }else{
             return errorResponseJson('CV not found.', 422);
         }

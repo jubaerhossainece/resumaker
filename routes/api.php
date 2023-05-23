@@ -49,7 +49,7 @@ Route::group(['prefix' => 'v1'], function () {
         /*=========== personal info api =================*/
         Route::get('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'get']);
         Route::post('cv/personal-info', [Cv\PersonalInfoController::class, 'store']);
-        Route::put('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'update']);
+        Route::post('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'update']);
 
         /*=========== experience api =================*/
         Route::get('cv/{id}/experience', [Cv\ExperienceController::class, 'get']);
