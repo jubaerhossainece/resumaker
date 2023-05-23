@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class ResumeUser extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'personal_info' => 'object',
+        'experience' => 'object',
+        'education' => 'object',
+        'skills' => 'object'
+    ];
 }

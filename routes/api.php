@@ -90,6 +90,16 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('cv/{id}/reference', [Cv\ReferenceController::class, 'save']);
         Route::put('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'update']);
         Route::delete('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'destroy']);
+
+
+        /*===============================*/
+        /*=========== Resume Apis ===========*/
+        /*===============================*/
+
+        /*=========== personal info api =================*/
+        Route::get('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'get']);
+        Route::post('resume/personal-info', [Resume\PersonalInfoController::class, 'store']);
+        Route::post('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'update']);
     });
 
 });
