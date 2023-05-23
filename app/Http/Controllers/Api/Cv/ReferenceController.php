@@ -14,10 +14,10 @@ class ReferenceController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->select('publications', 'user_id', 'id')->first();
+        ])->select('references', 'user_id', 'id')->first();
 
         if($cv){
-            return successResponseJson($cv->publications);
+            return successResponseJson($cv->references);
         }else{
             return errorResponseJson('No cv found.', 422);
         }
@@ -27,12 +27,11 @@ class ReferenceController extends Controller
     public function save(Request $request, $id)
     {
         $request->validate([
-            'publication_title' => 'required|string',
-            'publisher' => 'required|string',
-            'published_in' => 'sometimes|string',
-            'publication_url' => 'required|url',
-            'publication_date' => 'required|date',
-            'description' => 'required|string',
+            'name' => 'required|string',
+            'current_organization' => 'required|string',
+            'designation' => 'sometimes|string',
+            'number' => 'required|number',
+            'email' => 'required|email',
         ]);
         
         $cv = CvUser::where([
@@ -41,45 +40,43 @@ class ReferenceController extends Controller
         ])->first();
         
         if($cv){
-            $publication = new stdClass;
-            $publication->publication_title = $request->publication_title;
-            $publication->publisher = $request->publisher;
-            $publication->published_in = $request->published_in;
-            $publication->publication_url = $request->publication_url;
-            $publication->publication_date = $request->publication_date;
-            $publication->description = $request->description;
+            $reference = new stdClass;
+            $reference->name = $request->name;
+            $reference->current_organization = $request->current_organization;
+            $reference->designation = $request->designation;
+            $reference->number = $request->number;
+            $reference->email = $request->email;
 
             $id = uniqid();
-            if(is_null($cv->publications)){
+            if(is_null($cv->reference)){
                 $arr = array();
-                $arr[$id] = $publication;
-                $cv->publications = $arr;
+                $arr[$id] = $reference;
+                $cv->references = $arr;
                 $cv->save();
             }else{
                 $arr = array();
-                $arr[$id] = $publication;
+                $arr[$id] = $reference;
                 
-                $new_array = array_merge($cv->publications, $arr);
-                $cv->publications = $new_array;
+                $new_array = array_merge($cv->references, $arr);
+                $cv->references = $new_array;
                 $cv->save();
             }
     
-            return successResponseJson($cv->publications, 'Your publication information saved in database');
+            return successResponseJson($cv->references, 'Your publication information saved in database');
         }else{
             return errorResponseJson('No cv found with this id.', 422);
         }
     }
 
 
-    public function update(Request $request, $id, $pub_key)
+    public function update(Request $request, $id, $ref_key)
     {
         $request->validate([
-            'publication_title' => 'required|string',
-            'publisher' => 'required|string',
-            'published_in' => 'sometimes|string',
-            'publication_url' => 'required|url',
-            'publication_date' => 'required|date',
-            'description' => 'required|string',
+            'name' => 'required|string',
+            'current_organization' => 'required|string',
+            'designation' => 'sometimes|string',
+            'number' => 'required|number',
+            'email' => 'required|email',
         ]);
         
         $cv = CvUser::where([
@@ -88,26 +85,25 @@ class ReferenceController extends Controller
         ])->first();
 
         if($cv){
-            $publication = new stdClass;
-            $publication->publication_title = $request->publication_title;
-            $publication->publisher = $request->publisher;
-            $publication->published_in = $request->published_in;
-            $publication->publication_url = $request->publication_url;
-            $publication->publication_date = $request->publication_date;
-            $publication->description = $request->description;
+            $reference = new stdClass;
+            $reference->name = $request->name;
+            $reference->current_organization = $request->current_organization;
+            $reference->designation = $request->designation;
+            $reference->number = $request->number;
+            $reference->email = $request->email;
 
-            $publication_list = $cv->publications;
-            $publication_list[$pub_key] = $publication;
-            $cv->publications = $publication_list;
+            $reference_list = $cv->references;
+            $reference_list[$ref_key] = $reference;
+            $cv->references = $reference_list;
             $cv->save();
 
-            return successResponseJson($cv->publications, 'Your publication information updated');
+            return successResponseJson($cv->publications, 'Your reference information updated');
         }else{
             return errorResponseJson('CV not found.', 422);
         }
     }
 
-    public function destroy($id, $pub_key)
+    public function destroy($id, $ref_key)
     {
         $cv = CvUser::where([
             'id' => $id,
@@ -115,11 +111,11 @@ class ReferenceController extends Controller
         ])->first();
         
         if($cv){
-            $publication_list = $cv->publications;
-            unset($publication_list[$pub_key]);
-            $cv->publications = $publication_list;
+            $reference_list = $cv->references;
+            unset($reference_list[$ref_key]);
+            $cv->references = $reference_list;
             $cv->save();
-            return successResponseJson($cv->publications, 'Your publication information deleted');
+            return successResponseJson($cv->references, 'Your reference information deleted');
         }else{
             return errorResponseJson('CV not found.', 422);
         }

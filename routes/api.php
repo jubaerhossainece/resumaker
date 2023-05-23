@@ -86,7 +86,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::delete('cv/{id}/publication/{publication}', [Cv\PublicationController::class, 'destroy']);
 
         /*=========== references api =================*/
-        Route::get('cv/{id}/references', [Cv\PublicationController::class, 'get']);
+        Route::get('cv/{id}/references', [Cv\ReferenceController::class, 'get']);
         Route::post('cv/{id}/reference', [Cv\ReferenceController::class, 'save']);
         Route::put('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'update']);
         Route::delete('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'destroy']);
