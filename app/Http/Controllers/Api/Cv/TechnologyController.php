@@ -7,17 +7,17 @@ use App\Models\CvUser;
 use Illuminate\Http\Request;
 use stdClass;
 
-class SkillController extends Controller
+class TechnologyController extends Controller
 {
     public function get($id)
     {
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->select('skills', 'user_id', 'id')->first();
+        ])->select('technologies', 'user_id', 'id')->first();
 
         if($cv){
-            return successResponseJson($cv->skills);
+            return successResponseJson($cv->technologies);
         }else{
             return errorResponseJson('No cv found', 422);
         }
@@ -27,7 +27,7 @@ class SkillController extends Controller
     public function save(Request $request, $id)
     {
         $request->validate([
-            'skill' => 'required|string'
+            'technology' => 'required|string'
         ]);
         
         $cv = CvUser::where([
@@ -35,29 +35,29 @@ class SkillController extends Controller
             'user_id' => auth()->user()->id,
         ])->first();
 
-        if($cv->skills){
+        if($cv->technologies){
             $arr = [];
-            $arr[uniqid()] = $request->skill;
+            $arr[uniqid()] = $request->technology;
             $item = new stdClass;
-            $item = array_merge($cv->skills, $arr);
-            $cv->skills = $item;
+            $item = array_merge($cv->technologies, $arr);
+            $cv->technologies = $item;
             $cv->save();
         }else{
             $item = new stdClass;
             $item = [];
-            $item[uniqid()] = $request->skill;
-            $cv->skills = $item;
+            $item[uniqid()] = $request->technology;
+            $cv->technologies = $item;
             $cv->save();
         }
 
-        return successResponseJson($cv->skills, 'Your skill information saved in database.');
+        return successResponseJson($cv->technologies, 'Your technology information saved in database.');
     }
 
 
-    public function update(Request $request, $id, $skill_key)
+    public function update(Request $request, $id, $technology_key)
     {
         $request->validate([
-            'skill' => 'required|string'
+            'technology' => 'required|string'
         ]);
         
         $cv = CvUser::where([
@@ -66,19 +66,19 @@ class SkillController extends Controller
         ])->first();
 
         if($cv){
-            $skill_list = $cv->skills;
-            $skill_list[$skill_key] = $request->skill;
+            $technology_list = $cv->technologies;
+            $technology_list[$technology_key] = $request->technology;
             
-            $cv->skills = $skill_list;
+            $cv->technologies = $technology_list;
             $cv->save();
-            return successResponseJson($cv->skills, 'Your skill information saved in database.');
+            return successResponseJson($cv->technologies, 'Your technology information saved in database.');
         }else{
             return errorResponseJson('No cv found.', 422);
         }
     }
 
 
-    public function destroy($id, $skill_key)
+    public function destroy($id, $technology_key)
     {   
         $cv = CvUser::where([
             'id' => $id,
@@ -86,11 +86,11 @@ class SkillController extends Controller
         ])->first();
 
         if($cv){
-            $skill_list = $cv->skills;
-            unset($skill_list[$skill_key]);
-            $cv->skills = $skill_list;
+            $technology_list = $cv->technologies;
+            unset($technology_list[$technology_key]);
+            $cv->technologies = $technology_list;
             $cv->save();
-            return successResponseJson($cv->skills, 'Your skill information deleted.');
+            return successResponseJson($cv->technologies, 'Your technology information deleted.');
         }else{
             return errorResponseJson('No cv found.', 422);
         }

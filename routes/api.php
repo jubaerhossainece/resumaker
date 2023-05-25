@@ -63,9 +63,17 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('cv/{id}/education/{education}', [Cv\EducationController::class, 'update']);
         Route::delete('cv/{id}/education/{education}', [Cv\EducationController::class, 'destroy']);
 
-        /*=========== skill api =================*/
+        /*=========== api for skills section =================*/
+        //skill
         Route::get('cv/{id}/skill', [Cv\SkillController::class, 'get']);
         Route::post('cv/{id}/skill', [Cv\SkillController::class, 'save']);
+        Route::put('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'update']);
+        Route::delete('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'destroy']);
+        //technology
+        Route::get('cv/{id}/technology', [Cv\TechnologyController::class, 'get']);
+        Route::post('cv/{id}/technology', [Cv\TechnologyController::class, 'save']);
+        Route::put('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'update']);
+        Route::delete('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'destroy']);
 
         /*=========== certification api =================*/
         Route::get('cv/{id}/certification', [Cv\CertificationController::class, 'get']);
