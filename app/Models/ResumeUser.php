@@ -11,8 +11,8 @@ class ResumeUser extends Model
 
     protected $casts = [
         'personal_info' => 'object',
-        'experience' => 'object',
-        'education' => 'object',
-        'skills' => 'object'
+        'experience' => 'array',
+        'education' => 'array',
+        'skills' => 'array'
     ];
 }

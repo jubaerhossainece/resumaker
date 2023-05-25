@@ -56,7 +56,7 @@ class PersonalInfoController extends Controller
         $personal_info->country = $request->country;
         $personal_info->post_code = $request->post_code;
         $personal_info->about = $request->about;
-        $personal_info->social_links = $request->social_links;
+        $personal_info->social_links = json_decode($request->social_links);
 
         if ($request->hasFile('image')) {
             $path = 'public/cv/userImage';
@@ -106,14 +106,14 @@ class PersonalInfoController extends Controller
             $personal_info->country = $request->country;
             $personal_info->post_code = $request->post_code;
             $personal_info->about = $request->about;
-            $personal_info->social_links = $request->social_links;
+            $personal_info->social_links = json_decode($request->social_links);
 
             if ($request->hasFile('image')) {
                 $path = 'public/cv/userImage';
                 $file = $request->file('image');
                 $extension = $file->getClientOriginalExtension();
                 $filename_with_ext = time() . '.' . $extension;
-                if ($cv->personal_info->image) {
+                if (isset($cv->personal_info->image)) {
                     Storage::delete($path.'/'.$cv->personal_info->image);
                 }
                 $request->file('image')->storeAs($path, $filename_with_ext);

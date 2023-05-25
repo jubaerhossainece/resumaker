@@ -11,16 +11,16 @@ class SkillController extends Controller
 {
     public function get($id)
     {
-        return $certifications = CvUser::where('skills->skill', "HTML")->select('id')->get();
-        
-        $user = auth()->user();
-
-        $personal_info = CvUser::where([
+        $cv = CvUser::where([
             'id' => $id,
-            'user_id' => $user->id,
-        ])->select('personal_info', 'user_id', 'id')->first();
+            'user_id' => auth()->user()->id,
+        ])->select('skills', 'user_id', 'id')->first();
 
-        return successResponseJson($personal_info);
+        if($cv){
+            return successResponseJson($cv->skills);
+        }else{
+            return errorResponseJson('No cv found', 422);
+        }
     }
 
 
@@ -44,7 +44,7 @@ class SkillController extends Controller
             $cv->skills = $skill;
             $cv->save();
     
-            return successResponseJson($cv, 'Your skill information saved in database');
+            return successResponseJson($cv->skills, 'Your skill information saved in database');
         }else{
             return errorResponseJson('No cv found.', 422);
         }

@@ -100,6 +100,22 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'get']);
         Route::post('resume/personal-info', [Resume\PersonalInfoController::class, 'store']);
         Route::post('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'update']);
+
+        /*=========== experience api =================*/
+        Route::get('resume/{id}/experience', [Resume\ExperienceController::class, 'get']);
+        Route::post('resume/{id}/experience', [Resume\ExperienceController::class, 'save']);
+        Route::put('resume/{id}/experience/{experience}', [Resume\ExperienceController::class, 'update']);
+        Route::delete('resume/{id}/experience/{experience}', [Resume\ExperienceController::class, 'destroy']);
+
+        /*=========== education api =================*/
+        Route::get('resume/{id}/education', [Resume\EducationController::class, 'get']);
+        Route::post('resume/{id}/education', [Resume\EducationController::class, 'save']);
+        Route::put('resume/{id}/education/{education}', [Resume\EducationController::class, 'update']);
+        Route::delete('resume/{id}/education/{education}', [Resume\EducationController::class, 'destroy']);
+
+        /*=========== skill api =================*/
+        Route::get('resume/{id}/skill', [Resume\SkillController::class, 'get']);
+        Route::post('resume/{id}/skill', [Resume\SkillController::class, 'save']);
     });
 
 });

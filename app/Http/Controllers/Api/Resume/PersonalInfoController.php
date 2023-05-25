@@ -20,7 +20,7 @@ class PersonalInfoController extends Controller
         if ($resume) {
             return successResponseJson($resume->personal_info);
         } else {
-            return errorResponseJson('No CV found.', 422);
+            return errorResponseJson('No resume found.', 422);
         }
     }
 
@@ -57,7 +57,7 @@ class PersonalInfoController extends Controller
         $personal_info->country = $request->country;
         $personal_info->post_code = $request->post_code;
         $personal_info->about = $request->about;
-        $personal_info->social_links = $request->social_links;
+        $personal_info->social_links = json_decode($request->social_links);
         
         if ($request->hasFile('image')) {
             $path = 'public/resume/userImage';
@@ -108,14 +108,14 @@ class PersonalInfoController extends Controller
             $personal_info->country = $request->country;
             $personal_info->post_code = $request->post_code;
             $personal_info->about = $request->about;
-            $personal_info->social_links = $request->social_links;
+            $personal_info->social_links = json_decode($request->social_links);
 
             if ($request->hasFile('image')) {
                 $path = 'public/resume/userImage';
                 $file = $request->file('image');
                 $extension = $file->getClientOriginalExtension();
                 $filename_with_ext = time() . '.' . $extension;
-                if ($resume->personal_info->image) {
+                if (isset($resume->personal_info->image)) {
                     Storage::delete($path.'/'.$resume->personal_info->image);
                 }
                 $request->file('image')->storeAs($path, $filename_with_ext);
@@ -126,7 +126,8 @@ class PersonalInfoController extends Controller
             $resume->save();
             return successResponseJson($resume->personal_info, 'Your personal information updated');
         } else {
-            return errorResponseJson('No CV found', 422);
+            return errorResponseJson('No resume found', 422);
         }
     }
 }
+

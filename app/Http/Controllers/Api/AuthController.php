@@ -33,8 +33,12 @@ class AuthController extends Controller
 
             return errorResponseJson($exception->getMessage(),500);
         }
-
-        return successResponseJson(['user' => new UserResource($user)], 'Registration success');
+        return successResponseJson([
+            'access_token' => $user->createToken('authToken')->plainTextToken,
+            'token_type' => 'Bearer',
+            'user' => new UserResource($user)
+        ], 'registration Successful');
+        // return successResponseJson(['user' => new UserResource($user)], 'Registration success');
     }
 
     public function login(Request $request): JsonResponse
