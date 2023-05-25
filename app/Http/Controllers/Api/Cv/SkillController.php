@@ -38,12 +38,11 @@ class SkillController extends Controller
         if($cv->skills){
             $arr = [];
             $arr[uniqid()] = $request->skill;
-            $item = new stdClass;
+            
             $item = array_merge($cv->skills, $arr);
             $cv->skills = $item;
             $cv->save();
         }else{
-            $item = new stdClass;
             $item = [];
             $item[uniqid()] = $request->skill;
             $cv->skills = $item;

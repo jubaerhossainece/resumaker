@@ -5,19 +5,18 @@ namespace App\Http\Controllers\Api\Resume;
 use App\Http\Controllers\Controller;
 use App\Models\ResumeUser;
 use Illuminate\Http\Request;
-use stdClass;
 
-class SkillController extends Controller
+class TechnologyController extends Controller
 {
     public function get($id)
     {
         $resume = ResumeUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->select('skills', 'user_id', 'id')->first();
+        ])->select('technologies', 'user_id', 'id')->first();
 
         if($resume){
-            return successResponseJson($resume->skills);
+            return successResponseJson($resume->technologies);
         }else{
             return errorResponseJson('No resume found', 422);
         }
@@ -27,7 +26,7 @@ class SkillController extends Controller
     public function save(Request $request, $id)
     {
         $request->validate([
-            'skill' => 'required|string'
+            'technology' => 'required|string'
         ]);
         
         $resume = ResumeUser::where([
@@ -35,28 +34,28 @@ class SkillController extends Controller
             'user_id' => auth()->user()->id,
         ])->first();
 
-        if($resume->skills){
+        if($resume->technologies){
             $arr = [];
-            $arr[uniqid()] = $request->skill;
-            
-            $item = array_merge($resume->skills, $arr);
-            $resume->skills = $item;
+            $arr[uniqid()] = $request->technology;
+
+            $item = array_merge($resume->technologies, $arr);
+            $resume->technologies = $item;
             $resume->save();
         }else{
             $item = [];
-            $item[uniqid()] = $request->skill;
-            $resume->skills = $item;
+            $item[uniqid()] = $request->technology;
+            $resume->technologies = $item;
             $resume->save();
         }
 
-        return successResponseJson($resume->skills, 'Your skill information saved in database.');
+        return successResponseJson($resume->technologies, 'Your technology information saved in database.');
     }
 
 
-    public function update(Request $request, $id, $skill_key)
+    public function update(Request $request, $id, $technology_key)
     {
         $request->validate([
-            'skill' => 'required|string'
+            'technology' => 'required|string'
         ]);
         
         $resume = ResumeUser::where([
@@ -65,19 +64,19 @@ class SkillController extends Controller
         ])->first();
 
         if($resume){
-            $skill_list = $resume->skills;
-            $skill_list[$skill_key] = $request->skill;
+            $technology_list = $resume->technologies;
+            $technology_list[$technology_key] = $request->technology;
             
-            $resume->skills = $skill_list;
+            $resume->technologies = $technology_list;
             $resume->save();
-            return successResponseJson($resume->skills, 'Your skill information saved in database.');
+            return successResponseJson($resume->technologies, 'Your technology information saved in database.');
         }else{
             return errorResponseJson('No resume found.', 422);
         }
     }
 
 
-    public function destroy($id, $skill_key)
+    public function destroy($id, $technology_key)
     {   
         $resume = ResumeUser::where([
             'id' => $id,
@@ -85,11 +84,11 @@ class SkillController extends Controller
         ])->first();
 
         if($resume){
-            $skill_list = $resume->skills;
-            unset($skill_list[$skill_key]);
-            $resume->skills = $skill_list;
+            $technology_list = $resume->technologies;
+            unset($technology_list[$technology_key]);
+            $resume->technologies = $technology_list;
             $resume->save();
-            return successResponseJson($resume->skills, 'Your skill information deleted.');
+            return successResponseJson($resume->technologies, 'Your technology information deleted.');
         }else{
             return errorResponseJson('No resume found.', 422);
         }

@@ -122,8 +122,16 @@ Route::group(['prefix' => 'v1'], function () {
         Route::delete('resume/{id}/education/{education}', [Resume\EducationController::class, 'destroy']);
 
         /*=========== skill api =================*/
+        //skill
         Route::get('resume/{id}/skill', [Resume\SkillController::class, 'get']);
         Route::post('resume/{id}/skill', [Resume\SkillController::class, 'save']);
+        Route::put('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'update']);
+        Route::delete('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'destroy']);
+        //technology
+        Route::get('resume/{id}/technology', [Resume\TechnologyController::class, 'get']);
+        Route::post('resume/{id}/technology', [Resume\TechnologyController::class, 'save']);
+        Route::put('resume/{id}/technology/{technology}', [Resume\TechnologyController::class, 'update']);
+        Route::delete('resume/{id}/technology/{technology}', [Resume\TechnologyController::class, 'destroy']);
     });
 
 });

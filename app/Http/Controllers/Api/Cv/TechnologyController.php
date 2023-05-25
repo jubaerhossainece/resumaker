@@ -38,12 +38,11 @@ class TechnologyController extends Controller
         if($cv->technologies){
             $arr = [];
             $arr[uniqid()] = $request->technology;
-            $item = new stdClass;
+
             $item = array_merge($cv->technologies, $arr);
             $cv->technologies = $item;
             $cv->save();
         }else{
-            $item = new stdClass;
             $item = [];
             $item[uniqid()] = $request->technology;
             $cv->technologies = $item;
