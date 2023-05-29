@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Education extends Model
 {
     use HasFactory;
+
+    public function educationable()
+    {
+        return $this->morphTo();
+    }
 }

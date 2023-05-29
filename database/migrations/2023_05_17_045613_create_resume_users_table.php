@@ -16,11 +16,8 @@ class CreateResumeUsersTable extends Migration
         Schema::create('resume_users', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->json('personal_info')->nullable();
-            $table->json('experience')->nullable();
-            $table->json('education')->nullable();
-            $table->json('skills')->nullable();
-            $table->integer('template_id');
+            $table->string('name')->nullable();
+            $table->string('template_id')->nullable();
             $table->timestamps();
         });
     }

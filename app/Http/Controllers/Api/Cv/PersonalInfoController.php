@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
 use App\Models\CvUser;
+use App\Models\PersonalInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
@@ -15,10 +16,10 @@ class PersonalInfoController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->select('personal_info', 'user_id', 'id')->first();
+        ])->first();
 
         if($cv){
-            return successResponseJson($cv->personal_info);
+            return successResponseJson($cv->personalInfo);
         }else{
             return errorResponseJson('No CV found.', 422);
         }
@@ -42,11 +43,12 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
-        $cv = new CvUser();
+        $cv = new CvUser;
         $cv->user_id = auth()->user()->id;
         $cv->template_id = $request->template_id;
+        $cv->save();
 
-        $personal_info = new stdClass;
+        $personal_info = new PersonalInfo;
         $personal_info->first_name = $request->first_name;
         $personal_info->last_name = $request->last_name;
         $personal_info->email = $request->email;
@@ -56,7 +58,7 @@ class PersonalInfoController extends Controller
         $personal_info->country = $request->country;
         $personal_info->post_code = $request->post_code;
         $personal_info->about = $request->about;
-        $personal_info->social_links = json_decode($request->social_links);
+        $personal_info->social_links = $request->social_links;
 
         if ($request->hasFile('image')) {
             $path = 'public/cv/userImage';
@@ -67,10 +69,12 @@ class PersonalInfoController extends Controller
             $personal_info->image = $filename_with_ext;
         }
 
-        $cv->personal_info = $personal_info;
-        $cv->save();
-
-        return successResponseJson($cv->personal_info, 'Your personal information saved in database');
+        $cv->personalInfo()->save($personal_info);
+        $data = [
+            'cv_id' => $cv->id,
+            'personal_info' => $cv->personalInfo,
+        ];
+        return successResponseJson($data, 'Your personal information saved in database');
     }
 
 
@@ -90,13 +94,10 @@ class PersonalInfoController extends Controller
             'social_links' => 'required',
         ]);
 
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $cv = CvUser::find($id);
         
         if($cv){
-            $personal_info = new stdClass;
+            $personal_info = $cv->personalInfo;
             $personal_info->first_name = $request->first_name;
             $personal_info->last_name = $request->last_name;
             $personal_info->email = $request->email;
@@ -106,7 +107,7 @@ class PersonalInfoController extends Controller
             $personal_info->country = $request->country;
             $personal_info->post_code = $request->post_code;
             $personal_info->about = $request->about;
-            $personal_info->social_links = json_decode($request->social_links);
+            $personal_info->social_links = $request->social_links;
 
             if ($request->hasFile('image')) {
                 $path = 'public/cv/userImage';
@@ -120,9 +121,13 @@ class PersonalInfoController extends Controller
                 $personal_info->image = $filename_with_ext;
             }
 
-            $cv->personal_info = $personal_info;
-            $cv->save();
-            return successResponseJson($cv->personal_info, 'Your personal information updated');
+            // $personal_info->save();
+            $personal_info->save();
+            $data = [
+                'cv_id' => $cv->id,
+                'personal_info' => $cv->personalInfo,
+            ];
+            return successResponseJson($data, 'Your personal information updated');
         }else{
             return errorResponseJson('No CV found', 422);
         }

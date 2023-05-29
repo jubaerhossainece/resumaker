@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Institution extends Model
+class Certification extends Model
 {
     use HasFactory;
 
-    public function institutions()
+    public function certifiable()
     {
         return $this->morphTo();
     }

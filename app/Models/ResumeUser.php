@@ -9,10 +9,15 @@ class ResumeUser extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'personal_info' => 'object',
-        'experience' => 'array',
-        'education' => 'array',
-        'skills' => 'array'
-    ];
+    // protected $casts = [
+    //     'personal_info' => 'object',
+    //     'experience' => 'array',
+    //     'education' => 'array',
+    //     'skills' => 'array'
+    // ];
+
+    public function personalInfo()
+    {
+        return $this->morphOne(ResumeUser::class, 'personal_infoable');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
 use App\Models\CvUser;
+use App\Models\Education;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -14,7 +15,7 @@ class EducationController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->select('education', 'user_id', 'id')->first();
+        ])->first();
 
         if($cv){
             return successResponseJson($cv->education);
@@ -44,7 +45,7 @@ class EducationController extends Controller
         ])->first();
         
         if($cv){
-            $education = new stdClass;
+            $education = new Education();
             $education->study_field = $request->study_field;
             $education->degree = $request->degree;
             $education->institution_name = $request->institution_name;
@@ -53,28 +54,14 @@ class EducationController extends Controller
             $education->country = $request->country;
             $education->grad_date = $request->grad_date;
             $education->is_current = $request->is_current;
-
-            $id = uniqid();
-            if(is_null($cv->education)){
-                $arr = array();
-                $arr[$id] = $education;
-                $cv->education = $arr;
-                $cv->save();
-            }else{
-                $arr = array();
-                $arr[$id] = $education;
-                
-                $new_array = array_merge($cv->education, $arr);
-                $cv->education = $new_array;
-                $cv->save();
-            }
-            return successResponseJson($cv->education, 'Your education information saved in database');
+            $cv->education()->save($education);
+            return successResponseJson($cv->education()->find($education->id), 'Your education information saved in database');
         }else{
             return errorResponseJson('No cv found.', 422);
         }
     }
 
-    public function update(Request $request, $id, $cert_key)
+    public function update(Request $request, $id, $edu_id)
     {
         $request->validate([
             'study_field' => 'required|string',
@@ -93,7 +80,7 @@ class EducationController extends Controller
         ])->first();
         
         if($cv){
-            $education = new stdClass;
+            $education = $cv->education()->find($edu_id);
             $education->study_field = $request->study_field;
             $education->degree = $request->degree;
             $education->institution_name = $request->institution_name;
@@ -102,20 +89,16 @@ class EducationController extends Controller
             $education->country = $request->country;
             $education->grad_date = $request->grad_date;
             $education->is_current = $request->is_current;
-
-            $education_list = $cv->education;
-            $education_list[$cert_key] = $education;
-            $cv->education = $education_list;
-            $cv->save();
+            $education->save();
     
-            return successResponseJson($cv->education, 'Your education information updated in database');
+            return successResponseJson($education, 'Your education information updated in database');
         }else{
             return errorResponseJson('CV not found.', 422);
         }
     }
 
 
-    public function destroy($id, $edu_key)
+    public function destroy($id, $edu_id)
     {
         $cv = CvUser::where([
             'id' => $id,
@@ -123,11 +106,11 @@ class EducationController extends Controller
         ])->first();
         
         if($cv){
-            $education_list = $cv->education;
-            unset($education_list[$edu_key]);
-            $cv->education = $education_list;
-            $cv->save();
-            return successResponseJson($cv->education, 'Your education information deleted');
+            $education = $cv->education()->find($edu_id);
+            if($education){
+                $education->delete();
+            }
+            return successResponseJson($cv->education()->get(), 'Your education information deleted');
         }else{
             return errorResponseJson('CV not found.', 422);
         }

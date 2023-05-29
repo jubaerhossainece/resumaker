@@ -15,13 +15,13 @@ class CreateReferencesTable extends Migration
     {
         Schema::create('references', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('current_organization');
-            $table->string('designation');
-            $table->string('phone');
-            $table->string('email');
             $table->unsignedBigInteger('referenceable_id');
             $table->string('referenceable_type');
+            $table->string('name');
+            $table->string('current_organization')->nullable();
+            $table->string('designation');
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
         });
     }

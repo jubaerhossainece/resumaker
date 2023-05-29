@@ -15,16 +15,16 @@ class CreateEducationTable extends Migration
     {
         Schema::create('education', function (Blueprint $table) {
             $table->id();
-            $table->string('study_field');
-            $table->string('degree');
-            $table->string('institution_name');
-            $table->string('result');
-            $table->string('city');
-            $table->string('country');
-            $table->date('grad_date');
-            $table->boolean('is_current')->default(false);
             $table->unsignedBigInteger('educationable_id');
             $table->string('educationable_type');
+            $table->string('study_field');
+            $table->string('degree');
+            $table->string('institution_name')->nullable();
+            $table->string('result')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
+            $table->date('grad_date')->nullable();
+            $table->boolean('is_current')->default(false);
             $table->timestamps();
         });
     }

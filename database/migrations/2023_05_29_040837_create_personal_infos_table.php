@@ -15,19 +15,19 @@ class CreatePersonalInfosTable extends Migration
     {
         Schema::create('personal_infos', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('profession');
-            $table->string('email');
-            $table->string('phone');
-            $table->string('city');
-            $table->string('country');
-            $table->string('post_code');
-            $table->string('about');
-            $table->string('image');
-            $table->json('social_links');
             $table->unsignedBigInteger('personal_infoable_id');
             $table->string('personal_infoable_type');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('profession')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
+            $table->string('post_code')->nullable();
+            $table->text('about')->nullable();
+            $table->string('image')->nullable();
+            $table->json('social_links')->nullable();
             $table->timestamps();
         });
     }

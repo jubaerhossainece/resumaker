@@ -16,15 +16,8 @@ class CreateCvUsersTable extends Migration
         Schema::create('cv_users', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->json('personal_info')->nullable();
-            $table->json('experience')->nullable();
-            $table->json('education')->nullable();
-            $table->json('skills')->nullable();
-            $table->json('certifications')->nullable();
-            $table->json('awards')->nullable();
-            $table->json('publications')->nullable();
-            $table->json('references')->nullable();
-            $table->integer('template_id');
+            $table->string('name')->nullable();
+            $table->string('template_id')->nullable();
             $table->timestamps();
         });
     }
