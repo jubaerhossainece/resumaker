@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProfessionsTable extends Migration
+class CreateReferencesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,15 @@ class CreateProfessionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('professions', function (Blueprint $table) {
+        Schema::create('references', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('current_organization');
+            $table->string('designation');
+            $table->string('phone');
+            $table->string('email');
+            $table->unsignedBigInteger('referenceable_id');
+            $table->string('referenceable_type');
             $table->timestamps();
         });
     }
@@ -27,6 +33,6 @@ class CreateProfessionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('professions');
+        Schema::dropIfExists('references');
     }
 }
