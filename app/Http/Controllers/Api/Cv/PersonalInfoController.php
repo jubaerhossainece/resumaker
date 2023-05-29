@@ -16,7 +16,7 @@ class PersonalInfoController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->first();
+        ])->with('personalInfo')->first();
 
         if($cv){
             return successResponseJson($cv->personalInfo);
@@ -81,7 +81,7 @@ class PersonalInfoController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'image' => 'required|image',
+            'image' => 'image',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'profession' => 'required|string',
@@ -121,7 +121,6 @@ class PersonalInfoController extends Controller
                 $personal_info->image = $filename_with_ext;
             }
 
-            // $personal_info->save();
             $personal_info->save();
             $data = [
                 'cv_id' => $cv->id,

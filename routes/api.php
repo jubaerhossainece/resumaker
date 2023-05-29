@@ -52,7 +52,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'update']);
 
         /*=========== experience api =================*/
-        Route::get('cv/{id}/experience', [Cv\ExperienceController::class, 'get']);
+        Route::get('cv/{id}/experiences', [Cv\ExperienceController::class, 'get']);
         Route::post('cv/{id}/experience', [Cv\ExperienceController::class, 'save']);
         Route::put('cv/{id}/experience/{experience}', [Cv\ExperienceController::class, 'update']);
         Route::delete('cv/{id}/experience/{experience}', [Cv\ExperienceController::class, 'destroy']);
@@ -65,18 +65,18 @@ Route::group(['prefix' => 'v1'], function () {
 
         /*=========== api for skills section =================*/
         //skill
-        Route::get('cv/{id}/skill', [Cv\SkillController::class, 'get']);
+        Route::get('cv/{id}/skills', [Cv\SkillController::class, 'get']);
         Route::post('cv/{id}/skill', [Cv\SkillController::class, 'save']);
         Route::put('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'update']);
         Route::delete('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'destroy']);
         //technology
-        Route::get('cv/{id}/technology', [Cv\TechnologyController::class, 'get']);
+        Route::get('cv/{id}/technologies', [Cv\TechnologyController::class, 'get']);
         Route::post('cv/{id}/technology', [Cv\TechnologyController::class, 'save']);
         Route::put('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'update']);
         Route::delete('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'destroy']);
 
         /*=========== certification api =================*/
-        Route::get('cv/{id}/certification', [Cv\CertificationController::class, 'get']);
+        Route::get('cv/{id}/certifications', [Cv\CertificationController::class, 'get']);
         Route::post('cv/{id}/certification', [Cv\CertificationController::class, 'save']);
         Route::put('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'update']);
         Route::delete('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'destroy']);
@@ -110,7 +110,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'update']);
 
         /*=========== experience api =================*/
-        Route::get('resume/{id}/experience', [Resume\ExperienceController::class, 'get']);
+        Route::get('resume/{id}/experiences', [Resume\ExperienceController::class, 'get']);
         Route::post('resume/{id}/experience', [Resume\ExperienceController::class, 'save']);
         Route::put('resume/{id}/experience/{experience}', [Resume\ExperienceController::class, 'update']);
         Route::delete('resume/{id}/experience/{experience}', [Resume\ExperienceController::class, 'destroy']);
@@ -123,12 +123,12 @@ Route::group(['prefix' => 'v1'], function () {
 
         /*=========== skill api =================*/
         //skill
-        Route::get('resume/{id}/skill', [Resume\SkillController::class, 'get']);
+        Route::get('resume/{id}/skills', [Resume\SkillController::class, 'get']);
         Route::post('resume/{id}/skill', [Resume\SkillController::class, 'save']);
         Route::put('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'update']);
         Route::delete('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'destroy']);
         //technology
-        Route::get('resume/{id}/technology', [Resume\TechnologyController::class, 'get']);
+        Route::get('resume/{id}/technologies', [Resume\TechnologyController::class, 'get']);
         Route::post('resume/{id}/technology', [Resume\TechnologyController::class, 'save']);
         Route::put('resume/{id}/technology/{technology}', [Resume\TechnologyController::class, 'update']);
         Route::delete('resume/{id}/technology/{technology}', [Resume\TechnologyController::class, 'destroy']);

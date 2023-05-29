@@ -15,7 +15,7 @@ class EducationController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->first();
+        ])->with('education')->first();
 
         if($cv){
             return successResponseJson($cv->education);
@@ -109,8 +109,10 @@ class EducationController extends Controller
             $education = $cv->education()->find($edu_id);
             if($education){
                 $education->delete();
+                return successResponseJson($cv->education()->get(), 'Your education information deleted');
             }
-            return successResponseJson($cv->education()->get(), 'Your education information deleted');
+            return errorResponseJson('No education info to delete.', 422);
+
         }else{
             return errorResponseJson('CV not found.', 422);
         }

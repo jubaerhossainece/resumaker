@@ -9,15 +9,18 @@ class ResumeUser extends Model
 {
     use HasFactory;
 
-    // protected $casts = [
-    //     'personal_info' => 'object',
-    //     'experience' => 'array',
-    //     'education' => 'array',
-    //     'skills' => 'array'
-    // ];
-
     public function personalInfo()
     {
-        return $this->morphOne(ResumeUser::class, 'personal_infoable');
+        return $this->morphOne(PersonalInfo::class, 'personal_infoable');
+    }
+
+    public function experiences()
+    {
+        return $this->morphMany(Experience::class, 'experienceable');
+    }
+
+    public function education()
+    {
+        return $this->morphMany(Education::class, 'educationable');
     }
 }

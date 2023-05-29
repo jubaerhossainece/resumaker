@@ -11,6 +11,6 @@ class Certification extends Model
 
     public function certifiable()
     {
-        return $this->morphTo();
+        return $this->morphTo(__FUNCTION__, 'certifiable_type', 'certifiable_id');
     }
 }

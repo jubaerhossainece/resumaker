@@ -44,6 +44,6 @@ class CvUser extends Model
 
     public function references()
     {
-        return $this->morphMany(Publication::class, 'referenceable');
+        return $this->morphMany(Reference::class, 'referenceable');
     }
 }

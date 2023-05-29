@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Models\Certification;
 use App\Models\CvUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ class CertificationController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id
-            ])->select('certifications')->first();
+            ])->with('certifications')->first();
 
         if($cv){
             return successResponseJson($cv->certifications);
@@ -42,37 +43,22 @@ class CertificationController extends Controller
         ])->first();
         
         if($cv){
-            $certification = new stdClass;
+            $certification = new Certification();
             $certification->name = $request->name;
             $certification->issuing_org = $request->issuing_org;
             $certification->credential_url = $request->credential_url;
             $certification->issue_date = $request->issue_date;
             $certification->exp_date = $request->exp_date;
             $certification->is_no_exp = $request->is_no_exp;
-
-            $id = uniqid();
-            if(is_null($cv->certifications)){
-                $arr = array();
-                $arr[$id] = $certification;
-                $cv->certifications = $arr;
-                $cv->save();
-            }else{
-                
-                $arr = array();
-                $arr[$id] = $certification;
-                
-                $new_array = array_merge($cv->certifications, $arr);
-                $cv->certifications = $new_array;
-                $cv->save();
-            }
-            return successResponseJson($cv, 'Your certification information saved in database');
+            $cv->certifications()->save($certification);
+            return successResponseJson($certification, 'Your certification information saved in database');
         }else{
             return errorResponseJson('No cv found with this id.', 422);
         }
     }
 
 
-    public function update(Request $request, $id, $cert_key)
+    public function update(Request $request, $id, $cert_id)
     {
         $request->validate([
             'name' => 'required|string',
@@ -86,31 +72,25 @@ class CertificationController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->first();
+        ])->with('certifications')->first();
         
         if($cv){
-            $certification = new stdClass;
+            $certification = $cv->certifications->find($cert_id);
             $certification->name = $request->name;
             $certification->issuing_org = $request->issuing_org;
             $certification->credential_url = $request->credential_url;
             $certification->issue_date = $request->issue_date;
             $certification->exp_date = $request->exp_date;
             $certification->is_no_exp = $request->is_no_exp;
-
-            $certifications = $cv->certifications;
-            $certifications[$cert_key] = $certification;
-            
-            $cv->certifications = $certifications;
-            $cv->save();
-    
-            return successResponseJson($cv->certifications, 'Your certification information updated in database');
+            $certification->save();
+            return successResponseJson($cv->certifications()->get(), 'Your certification information updated in database');
         }else{
             return errorResponseJson('CV not found.', 422);
         }
     }
 
 
-    public function destroy($id, $cert_key)
+    public function destroy($id, $cert_id)
     {
         $cv = CvUser::where([
             'id' => $id,
@@ -118,11 +98,13 @@ class CertificationController extends Controller
         ])->first();
         
         if($cv){
-            $certifications = $cv->certifications;
-            unset($certifications[$cert_key]);
-            $cv->certifications = $certifications;
-            $cv->save();
-            return successResponseJson($cv->certifications, 'Your certification information deleted');
+            $certification = $cv->certifications()->find($cert_id);
+            if($certification){
+                $certification->delete();
+                return successResponseJson($cv->certifications()->get(), 'Your certification information deleted');
+            }
+            return errorResponseJson('No certification info to delete.', 422);
+            
         }else{
             return errorResponseJson('CV not found.', 422);
         }

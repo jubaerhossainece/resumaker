@@ -15,7 +15,7 @@ class ExperienceController extends Controller
         $cv = CvUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->first();
+        ])->with('experiences')->first();
 
         if($cv){
             return successResponseJson($cv->experiences);
@@ -103,8 +103,9 @@ class ExperienceController extends Controller
             $exp = $cv->experiences->find($exp_id);
             if($exp){
                 $exp->delete();
+                return successResponseJson($cv->experiences()->get(), 'Your experience information deleted');
             }
-            return successResponseJson($cv->experiences()->get(), 'Your experience information deleted');
+            return errorResponseJson('No experience info to delete.', 422);
         }else{
             return errorResponseJson('CV not found.', 422);
         }
