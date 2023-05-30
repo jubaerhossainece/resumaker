@@ -7,22 +7,14 @@ use App\Models\CvUser;
 use App\Models\PersonalInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use stdClass;
 
 class PersonalInfoController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->with('personalInfo')->first();
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('personalInfo')->firstOrFail();
 
-        if($cv){
-            return successResponseJson($cv->personalInfo);
-        }else{
-            return errorResponseJson('No CV found.', 422);
-        }
+        return successResponseJson($cv->personalInfo);
     }
 
 
@@ -94,41 +86,32 @@ class PersonalInfoController extends Controller
             'social_links' => 'required',
         ]);
 
-        $cv = CvUser::find($id);
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
         
-        if($cv){
-            $personal_info = $cv->personalInfo;
-            $personal_info->first_name = $request->first_name;
-            $personal_info->last_name = $request->last_name;
-            $personal_info->email = $request->email;
-            $personal_info->phone = $request->phone;
-            $personal_info->profession = $request->profession;
-            $personal_info->city = $request->city;
-            $personal_info->country = $request->country;
-            $personal_info->post_code = $request->post_code;
-            $personal_info->about = $request->about;
-            $personal_info->social_links = $request->social_links;
+        $personal_info = $cv->personalInfo;
+        $personal_info->first_name = $request->first_name;
+        $personal_info->last_name = $request->last_name;
+        $personal_info->email = $request->email;
+        $personal_info->phone = $request->phone;
+        $personal_info->profession = $request->profession;
+        $personal_info->city = $request->city;
+        $personal_info->country = $request->country;
+        $personal_info->post_code = $request->post_code;
+        $personal_info->about = $request->about;
+        $personal_info->social_links = $request->social_links;
 
-            if ($request->hasFile('image')) {
-                $path = 'public/cv/userImage';
-                $file = $request->file('image');
-                $extension = $file->getClientOriginalExtension();
-                $filename_with_ext = time() . '.' . $extension;
-                if (isset($cv->personal_info->image)) {
-                    Storage::delete($path.'/'.$cv->personal_info->image);
-                }
-                $request->file('image')->storeAs($path, $filename_with_ext);
-                $personal_info->image = $filename_with_ext;
+        if ($request->hasFile('image')) {
+            $path = 'public/cv/userImage';
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+            $filename_with_ext = time() . '.' . $extension;
+            if (isset($cv->personal_info->image)) {
+                Storage::delete($path.'/'.$cv->personal_info->image);
             }
-
-            $personal_info->save();
-            $data = [
-                'cv_id' => $cv->id,
-                'personal_info' => $cv->personalInfo,
-            ];
-            return successResponseJson($data, 'Your personal information updated');
-        }else{
-            return errorResponseJson('No CV found', 422);
+            $request->file('image')->storeAs($path, $filename_with_ext);
+            $personal_info->image = $filename_with_ext;
         }
+        $personal_info->save();
+        return successResponseJson($cv->personalInfo, 'Your personal information updated');
     }
 }

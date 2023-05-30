@@ -6,22 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\CvUser;
 use App\Models\Reference;
 use Illuminate\Http\Request;
-use stdClass;
 
 class ReferenceController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->with('references')->first();
-
-        if($cv){
-            return successResponseJson($cv->references);
-        }else{
-            return errorResponseJson('No cv found.', 422);
-        }
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('references')->firstOrFail();
+        return successResponseJson($cv->references);
     }
 
 
@@ -35,24 +26,17 @@ class ReferenceController extends Controller
             'email' => 'required|email',
         ]);
         
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
-        
-        if($cv){
-            $reference = new Reference();
-            $reference->name = $request->name;
-            $reference->current_organization = $request->current_organization;
-            $reference->designation = $request->designation;
-            $reference->phone = $request->phone;
-            $reference->email = $request->email;
-            $cv->references()->save($reference);
-    
-            return successResponseJson($reference, 'Your reference information saved in database');
-        }else{
-            return errorResponseJson('No cv found with this id.', 422);
-        }
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+
+        $reference = new Reference();
+        $reference->name = $request->name;
+        $reference->current_organization = $request->current_organization;
+        $reference->designation = $request->designation;
+        $reference->phone = $request->phone;
+        $reference->email = $request->email;
+        $cv->references()->save($reference);
+
+        return successResponseJson($cv->references()->findOrFail($reference->id), 'Your reference information saved in database');
     }
 
 
@@ -66,47 +50,26 @@ class ReferenceController extends Controller
             'email' => 'required|email',
         ]);
         
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
 
-        if($cv){
-            $reference = $cv->references()->find($ref_id);
-            $reference->name = $request->name;
-            $reference->current_organization = $request->current_organization;
-            $reference->designation = $request->designation;
-            $reference->phone = $request->phone;
-            $reference->email = $request->email;
-            $result = $reference->save();
-            if($result){
-                return successResponseJson($cv->references, 'Your reference information updated');
-            }else{
-                return errorResponseJson('Something went wrong.', 422);
-            }
+        $reference = $cv->references()->findOrFail($ref_id);
+        $reference->name = $request->name;
+        $reference->current_organization = $request->current_organization;
+        $reference->designation = $request->designation;
+        $reference->phone = $request->phone;
+        $reference->email = $request->email;
+        $reference->save();
 
-        }else{
-            return errorResponseJson('CV not found.', 422);
-        }
+        return successResponseJson($cv->references()->findOrFail($ref_id), 'Your reference information updated');
     }
 
     public function destroy($id, $ref_id)
     {
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
 
-        if($cv){
-            $reference = $cv->references()->find($ref_id);
-            if($reference){
-                $reference->delete();
-                return successResponseJson($cv->references()->get(), 'Your reference information deleted');
-            }
-            return errorResponseJson('No reference info to delete.', 422);
+        $reference = $cv->references()->findOrFail($ref_id);
+        $reference->delete();
 
-        }else{
-            return errorResponseJson('CV not found.', 422);
-        }
+        return successResponseJson($cv->references()->get(), 'Your reference information deleted');
     }
 }

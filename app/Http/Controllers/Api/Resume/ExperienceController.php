@@ -12,16 +12,9 @@ class ExperienceController extends Controller
 {
     public function get($id)
     {
-        $resume = ResumeUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->with('experiences')->first();
+        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('experiences')->firstOrFail();
 
-        if($resume){
-            return successResponseJson($resume->experiences);
-        }else{
-            return errorResponseJson('No resume found.', 422);
-        }
+        return successResponseJson($resume->experiences);
 
     }
 
@@ -33,31 +26,24 @@ class ExperienceController extends Controller
             'job_title' => 'required|string',
             'responsibilities_achievements' => 'required|string',
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'end_date' => 'nullable|date',
             'city' => 'required|string',
             'country' => 'required|string',
         ]);
         
-        $resume = ResumeUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
         
-        if($resume){
-            $experience = new Experience();
-            $experience->organization = $request->organization;
-            $experience->job_title = $request->job_title;
-            $experience->responsibilities_achievements = $request->responsibilities_achievements;
-            $experience->start_date = $request->start_date;
-            $experience->end_date = $request->end_date;
-            $experience->city = $request->city;
-            $experience->country = $request->country;
-            $resume->experiences()->save($experience);
-    
-            return successResponseJson($experience, 'Your experience information saved in database');
-        }else{
-            return errorResponseJson('No resume found.', 422);
-        }
+        $experience = new Experience();
+        $experience->organization = $request->organization;
+        $experience->job_title = $request->job_title;
+        $experience->responsibilities_achievements = $request->responsibilities_achievements;
+        $experience->start_date = $request->start_date;
+        $experience->end_date = $request->end_date;
+        $experience->city = $request->city;
+        $experience->country = $request->country;
+        $resume->experiences()->save($experience);
+
+        return successResponseJson($resume->experiences()->findOrFail($experience->id), 'Your experience information saved in database');
     }
 
 
@@ -68,46 +54,32 @@ class ExperienceController extends Controller
             'job_title' => 'required|string',
             'responsibilities_achievements' => 'required|string',
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'end_date' => 'nullable|date',
             'city' => 'required|string',
             'country' => 'required|string',
         ]);
 
-        $resume = ResumeUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
 
-        if($resume){
-            $experience = $resume->experiences->find($exp_id);
-            $experience->organization = $request->organization;
-            $experience->job_title = $request->job_title;
-            $experience->responsibilities_achievements = $request->responsibilities_achievements;
-            $experience->start_date = $request->start_date;
-            $experience->end_date = $request->end_date;
-            $experience->city = $request->city;
-            $experience->country = $request->country;
-            $experience->save();
+        $experience = $resume->experiences()->findOrFail($exp_id);
+        $experience->organization = $request->organization;
+        $experience->job_title = $request->job_title;
+        $experience->responsibilities_achievements = $request->responsibilities_achievements;
+        $experience->start_date = $request->start_date;
+        $experience->end_date = $request->end_date;
+        $experience->city = $request->city;
+        $experience->country = $request->country;
+        $experience->save();
 
-            return successResponseJson($experience, 'Your experience information updated');
-        }else{
-            return errorResponseJson('Resume not found.', 422);
-        }
+        return successResponseJson($resume->experiences()->findOrFail($exp_id), 'Your experience information updated');
     }
 
     public function destroy($id, $exp_id)
     {
-        $resume = ResumeUser::where('id', $id)->first();
-        
-        if($resume){
-            $exp = $resume->experiences->find($exp_id);
-            if($exp){
-                $exp->delete();
-                return successResponseJson($resume->experiences()->get(), 'Your experience information deleted');
-            }
-            return errorResponseJson('No experience info to delete.', 422);
-        }else{
-            return errorResponseJson('Resume not found.', 422);
-        }
+        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $exp = $resume->experiences()->findOrFail($exp_id);
+        $exp->delete();
+
+        return successResponseJson($resume->experiences()->get(), 'Your experience information deleted');
     }
 }

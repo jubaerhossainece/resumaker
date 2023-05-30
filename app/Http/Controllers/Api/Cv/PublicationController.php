@@ -6,22 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\CvUser;
 use App\Models\Publication;
 use Illuminate\Http\Request;
-use stdClass;
 
 class PublicationController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->with('publications')->first();
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('publications')->firstOrFail();
 
-        if($cv){
-            return successResponseJson($cv->publications);
-        }else{
-            return errorResponseJson('No cv found.', 422);
-        }
+        return successResponseJson($cv->publications);
     }
 
 
@@ -36,24 +28,18 @@ class PublicationController extends Controller
             'description' => 'required|string',
         ]);
         
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
         
-        if($cv){
-            $publication = new Publication();
-            $publication->publication_title = $request->publication_title;
-            $publication->publisher = $request->publisher;
-            $publication->published_in = $request->published_in;
-            $publication->publication_url = $request->publication_url;
-            $publication->publication_date = $request->publication_date;
-            $publication->description = $request->description;
-            $cv->publications()->save($publication);
-            return successResponseJson($publication, 'Your publication information saved in database');
-        }else{
-            return errorResponseJson('No cv found with this id.', 422);
-        }
+        $publication = new Publication();
+        $publication->publication_title = $request->publication_title;
+        $publication->publisher = $request->publisher;
+        $publication->published_in = $request->published_in;
+        $publication->publication_url = $request->publication_url;
+        $publication->publication_date = $request->publication_date;
+        $publication->description = $request->description;
+        $cv->publications()->save($publication);
+
+        return successResponseJson($cv->publications()->findOrFail($publication->id), 'Your publication information saved in database');
     }
 
 
@@ -68,44 +54,27 @@ class PublicationController extends Controller
             'description' => 'required|string',
         ]);
         
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
 
-        if($cv){
-            $publication = $cv->publications()->find($pub_id);
-            $publication->publication_title = $request->publication_title;
-            $publication->publisher = $request->publisher;
-            $publication->published_in = $request->published_in;
-            $publication->publication_url = $request->publication_url;
-            $publication->publication_date = $request->publication_date;
-            $publication->description = $request->description;
-            $publication->save();
+        $publication = $cv->publications()->findOrFail($pub_id);
+        $publication->publication_title = $request->publication_title;
+        $publication->publisher = $request->publisher;
+        $publication->published_in = $request->published_in;
+        $publication->publication_url = $request->publication_url;
+        $publication->publication_date = $request->publication_date;
+        $publication->description = $request->description;
+        $publication->save();
 
-            return successResponseJson($cv->publications()->get(), 'Your publication information updated');
-        }else{
-            return errorResponseJson('CV not found.', 422);
-        }
+        return successResponseJson($cv->publications()->findOrFail($pub_id), 'Your publication information updated');
     }
 
     public function destroy($id, $pub_id)
     {
-        $cv = CvUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
 
-        if($cv){
-            $publication = $cv->publications()->find($pub_id);
-            if($publication){
-                $publication->delete();
-                return successResponseJson($cv->publications()->get(), 'Your publication information deleted');
-            }
-            return errorResponseJson('No publication info to delete.', 422);
-
-        }else{
-            return errorResponseJson('CV not found.', 422);
-        }
+        $publication = $cv->publications()->findOrFail($pub_id);
+        $publication->delete();
+        
+        return successResponseJson($cv->publications()->get(), 'Your publication information deleted');
     }
 }

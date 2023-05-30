@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class CvUser extends Model
 {
@@ -45,5 +47,15 @@ class CvUser extends Model
     public function references()
     {
         return $this->morphMany(Reference::class, 'referenceable');
+    }
+
+    public function skills(): MorphToMany
+    {
+        return $this->morphToMany(Skill::class, 'skillable');
+    }
+
+    public function technologies(): MorphToMany
+    {
+        return $this->morphToMany(Technology::class, 'technologizable');
     }
 }

@@ -9,6 +9,10 @@ class PersonalInfo extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'social_links' => 'array'
+    ];
+
     public function personalInfoable()
     {
         return $this->morphTo(__FUNCTION__, 'personal_infoable_type', 'personal_infoable_id');

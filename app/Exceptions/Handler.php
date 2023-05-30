@@ -50,6 +50,12 @@ class Handler extends ExceptionHandler
                 return errorResponseJson('No data found', 404);
             }
         });
+
+        $this->renderable(function (NotFoundHttpException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return errorResponseJson('No data found', 404);
+            }
+        });
     }
 
     protected function unauthenticated($request, AuthenticationException $exception)

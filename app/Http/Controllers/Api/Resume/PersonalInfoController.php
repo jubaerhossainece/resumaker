@@ -13,16 +13,9 @@ class PersonalInfoController extends Controller
 {
     public function get($id)
     {
-        $resume = ResumeUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->with('personalInfo')->first();
+        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('personalInfo')->firstOrFail();
 
-        if($resume){
-            return successResponseJson($resume->personalInfo);
-        }else{
-            return errorResponseJson('No resume found.', 422);
-        }
+        return successResponseJson($resume->personalInfo);
     }
 
 
@@ -94,42 +87,35 @@ class PersonalInfoController extends Controller
             'social_links' => 'required',
         ]);
 
-        $resume = ResumeUser::find($id);
+        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
         
-        if($resume){
-            $personal_info = $resume->personalInfo;
-            $personal_info->first_name = $request->first_name;
-            $personal_info->last_name = $request->last_name;
-            $personal_info->email = $request->email;
-            $personal_info->phone = $request->phone;
-            $personal_info->profession = $request->profession;
-            $personal_info->city = $request->city;
-            $personal_info->country = $request->country;
-            $personal_info->post_code = $request->post_code;
-            $personal_info->about = $request->about;
-            $personal_info->social_links = $request->social_links;
+        $personal_info = $resume->personalInfo;
+        $personal_info->first_name = $request->first_name;
+        $personal_info->last_name = $request->last_name;
+        $personal_info->email = $request->email;
+        $personal_info->phone = $request->phone;
+        $personal_info->profession = $request->profession;
+        $personal_info->city = $request->city;
+        $personal_info->country = $request->country;
+        $personal_info->post_code = $request->post_code;
+        $personal_info->about = $request->about;
+        $personal_info->social_links = $request->social_links;
 
-            if ($request->hasFile('image')) {
-                $path = 'public/resume/userImage';
-                $file = $request->file('image');
-                $extension = $file->getClientOriginalExtension();
-                $filename_with_ext = time() . '.' . $extension;
-                if (isset($resume->personal_info->image)) {
-                    Storage::delete($path.'/'.$resume->personal_info->image);
-                }
-                $request->file('image')->storeAs($path, $filename_with_ext);
-                $personal_info->image = $filename_with_ext;
+        if ($request->hasFile('image')) {
+            $path = 'public/resume/userImage';
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+            $filename_with_ext = time() . '.' . $extension;
+            if (isset($resume->personal_info->image)) {
+                Storage::delete($path.'/'.$resume->personal_info->image);
             }
-
-            $personal_info->save();
-            $data = [
-                'resume_id' => $resume->id,
-                'personal_info' => $resume->personalInfo,
-            ];
-            return successResponseJson($data, 'Your personal information updated');
-        }else{
-            return errorResponseJson('No resume found', 422);
+            $request->file('image')->storeAs($path, $filename_with_ext);
+            $personal_info->image = $filename_with_ext;
         }
+        
+        $personal_info->save();
+
+        return successResponseJson($resume->personalInfo, 'Your personal information updated');
     }
 }
 
