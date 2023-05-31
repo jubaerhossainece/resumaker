@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PublicationResource;
 use App\Models\CvUser;
 use App\Models\Publication;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class PublicationController extends Controller
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('publications')->firstOrFail();
 
-        return successResponseJson($cv->publications);
+        return successResponseJson(PublicationResource::collection($cv->publications));
     }
 
 
@@ -37,9 +38,9 @@ class PublicationController extends Controller
         $publication->publication_url = $request->publication_url;
         $publication->publication_date = $request->publication_date;
         $publication->description = $request->description;
-        $cv->publications()->save($publication);
+        $data = $cv->publications()->save($publication);
 
-        return successResponseJson($cv->publications()->findOrFail($publication->id), 'Your publication information saved in database');
+        return successResponseJson(new PublicationResource($data), 'Your publication information saved in database');
     }
 
 
@@ -63,9 +64,12 @@ class PublicationController extends Controller
         $publication->publication_url = $request->publication_url;
         $publication->publication_date = $request->publication_date;
         $publication->description = $request->description;
-        $publication->save();
+        $result = $publication->save();
 
-        return successResponseJson($cv->publications()->findOrFail($pub_id), 'Your publication information updated');
+        if($result){
+            return successResponseJson(new PublicationResource($publication), 'Your publication information updated');
+        }
+        return errorResponseJson('Something went wrong', 500);
     }
 
     public function destroy($id, $pub_id)
@@ -75,6 +79,6 @@ class PublicationController extends Controller
         $publication = $cv->publications()->findOrFail($pub_id);
         $publication->delete();
         
-        return successResponseJson($cv->publications()->get(), 'Your publication information deleted');
+        return successResponseJson(PublicationResource::collection($cv->publications()->get()), 'Your publication information deleted');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Resume;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EducationResource;
 use App\Models\Education;
 use App\Models\ResumeUser;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class EducationController extends Controller
     {
         $cv = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('education')->firstOrFail();
 
-        return successResponseJson($cv->education);
+        return successResponseJson(EducationResource::collection($cv->education));
     }
 
 
@@ -42,9 +43,9 @@ class EducationController extends Controller
         $education->country = $request->country;
         $education->grad_date = $request->grad_date;
         $education->is_current = $request->is_current;
-        $cv->education()->save($education);
+        $data = $cv->education()->save($education);
         
-        return successResponseJson($cv->education()->findOrFail($education->id), 'Your education information saved in database');
+        return successResponseJson(new EducationResource($data), 'Your education information saved in database');
     }
 
     public function update(Request $request, $id, $edu_id)
@@ -71,8 +72,12 @@ class EducationController extends Controller
         $education->country = $request->country;
         $education->grad_date = $request->grad_date;
         $education->is_current = $request->is_current;
-        $education->save();
-        return successResponseJson($cv->education()->findOrFail($edu_id), 'Your education information updated in database');
+        $result = $education->save();
+        
+        if($result){
+            return successResponseJson(new EducationResource($education), 'Your education information updated in database');
+        }
+        return errorResponseJson('Something went wrong', 500);
     }
 
 
@@ -83,6 +88,6 @@ class EducationController extends Controller
         $education = $cv->education()->findOrFail($edu_id);
         $education->delete();
 
-        return successResponseJson($cv->education()->get(), 'Your education information deleted');
+        return successResponseJson(EducationResource::collection($cv->education()->get()), 'Your education information deleted');
     }
 }

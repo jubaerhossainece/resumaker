@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SkillResource;
+use App\Http\Resources\TechnologyResource;
 use App\Models\CvUser;
 use App\Models\Skill;
 use App\Models\Technology;
@@ -13,7 +15,7 @@ class SkillController extends Controller
     public function get($id)
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('skills')->firstOrFail();
-        return successResponseJson(['skill' => $cv->skills, 'technology' => $cv->technologies]);
+        return successResponseJson(['skill' => SkillResource::collection($cv->skills), 'technology' => TechnologyResource::collection($cv->technologies)]);
     }
 
 
@@ -50,7 +52,7 @@ class SkillController extends Controller
         $technologies = Technology::whereIn('name', $request->technology)->pluck('id')->all();
         $cv->technologies()->sync($technologies);
 
-        return successResponseJson([$cv->technologies, $cv->skills], 'Your skill information saved in database.');
+        return successResponseJson(['skill' => SkillResource::collection($cv->skills), 'technology' => TechnologyResource::collection($cv->technologies)], 'Your skill information saved in database.');
         
     }
 

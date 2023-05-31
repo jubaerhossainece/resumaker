@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ExperienceResource;
 use App\Models\CvUser;
 use App\Models\Experience;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class ExperienceController extends Controller
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('experiences')->firstOrFail();
         
-        return successResponseJson($cv->experiences);
+        return successResponseJson(ExperienceResource::collection($cv->experiences));
     }
 
 
@@ -38,9 +39,9 @@ class ExperienceController extends Controller
         $experience->end_date = $request->end_date;
         $experience->city = $request->city;
         $experience->country = $request->country;
-        $cv->experiences()->save($experience);
+        $data = $cv->experiences()->save($experience);
 
-        return successResponseJson($cv->experiences()->findOrFail($experience->id), 'Your experience information saved in database');
+        return successResponseJson(new ExperienceResource($data), 'Your experience information saved in database');
     }
 
 
@@ -66,9 +67,12 @@ class ExperienceController extends Controller
         $experience->end_date = $request->end_date;
         $experience->city = $request->city;
         $experience->country = $request->country;
-        $experience->save();
-        
-        return successResponseJson($cv->experiences()->findOrFail($exp_id), 'Your experience information updated');
+        $result = $experience->save();
+
+        if($result){
+            return successResponseJson(new ExperienceResource($experience), 'Your experience information updated in database');
+        }
+        return errorResponseJson('Something went wrong', 500);
     }
 
     public function destroy($id, $exp_id)
@@ -78,6 +82,6 @@ class ExperienceController extends Controller
         $exp = $cv->experiences()->findOrFail($exp_id);
         $exp->delete();
         
-        return successResponseJson($cv->experiences()->get(), 'Your experience information deleted');
+        return successResponseJson(ExperienceResource::collection($cv->experiences()->get()), 'Your experience information deleted');
     }
 }

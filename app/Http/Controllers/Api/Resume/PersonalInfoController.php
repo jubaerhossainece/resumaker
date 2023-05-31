@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Resume;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PersonalInfoResource;
 use App\Models\PersonalInfo;
 use App\Models\ResumeUser;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class PersonalInfoController extends Controller
     {
         $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('personalInfo')->firstOrFail();
 
-        return successResponseJson($resume->personalInfo);
+        return successResponseJson(new PersonalInfoResource($resume->personalInfo));
     }
 
 
@@ -65,7 +66,7 @@ class PersonalInfoController extends Controller
         $resume->personalInfo()->save($personal_info);
         $data = [
             'resume_id' => $resume->id,
-            'personal_info' => $resume->personalInfo,
+            'personal_info' => new PersonalInfoResource($resume->personalInfo),
         ];
         return successResponseJson($data, 'Your personal information saved in database');
     }
@@ -111,11 +112,13 @@ class PersonalInfoController extends Controller
             }
             $request->file('image')->storeAs($path, $filename_with_ext);
             $personal_info->image = $filename_with_ext;
-        }
-        
-        $personal_info->save();
+        }        
+        $result = $personal_info->save();
 
-        return successResponseJson($resume->personalInfo, 'Your personal information updated');
+        if($result){
+            return successResponseJson(new PersonalInfoResource($personal_info), 'Your personal information updated');
+        }
+        return errorResponseJson('Something went wrong', 500);
     }
 }
 

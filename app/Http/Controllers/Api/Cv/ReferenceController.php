@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ReferenceResource;
 use App\Models\CvUser;
 use App\Models\Reference;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class ReferenceController extends Controller
     public function get($id)
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('references')->firstOrFail();
-        return successResponseJson($cv->references);
+        return successResponseJson(ReferenceResource::collection($cv->references));
     }
 
 
@@ -34,9 +35,9 @@ class ReferenceController extends Controller
         $reference->designation = $request->designation;
         $reference->phone = $request->phone;
         $reference->email = $request->email;
-        $cv->references()->save($reference);
+        $data = $cv->references()->save($reference);
 
-        return successResponseJson($cv->references()->findOrFail($reference->id), 'Your reference information saved in database');
+        return successResponseJson(new ReferenceResource($data), 'Your reference information saved in database');
     }
 
 
@@ -58,9 +59,12 @@ class ReferenceController extends Controller
         $reference->designation = $request->designation;
         $reference->phone = $request->phone;
         $reference->email = $request->email;
-        $reference->save();
-
-        return successResponseJson($cv->references()->findOrFail($ref_id), 'Your reference information updated');
+        $result = $reference->save();
+ 
+        if($result){
+            return successResponseJson(new ReferenceResource($reference), 'Your reference information updated');
+        }
+        return errorResponseJson('Something went wrong', 500);
     }
 
     public function destroy($id, $ref_id)
@@ -70,6 +74,6 @@ class ReferenceController extends Controller
         $reference = $cv->references()->findOrFail($ref_id);
         $reference->delete();
 
-        return successResponseJson($cv->references()->get(), 'Your reference information deleted');
+        return successResponseJson(ReferenceResource::collection($cv->references()->get()), 'Your reference information deleted');
     }
 }

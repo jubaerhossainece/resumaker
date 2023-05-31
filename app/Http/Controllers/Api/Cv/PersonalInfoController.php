@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PersonalInfoResource;
 use App\Models\CvUser;
 use App\Models\PersonalInfo;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class PersonalInfoController extends Controller
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('personalInfo')->firstOrFail();
 
-        return successResponseJson($cv->personalInfo);
+        return successResponseJson(new PersonalInfoResource($cv->personalInfo));
     }
 
 
@@ -60,11 +61,11 @@ class PersonalInfoController extends Controller
             $request->file('image')->storeAs($path, $filename_with_ext);
             $personal_info->image = $filename_with_ext;
         }
-
-        $cv->personalInfo()->save($personal_info);
+        $info = $cv->personalInfo()->save($personal_info);
+        
         $data = [
             'cv_id' => $cv->id,
-            'personal_info' => $cv->personalInfo,
+            'personal_info' => new PersonalInfoResource($info),
         ];
         return successResponseJson($data, 'Your personal information saved in database');
     }
@@ -111,7 +112,11 @@ class PersonalInfoController extends Controller
             $request->file('image')->storeAs($path, $filename_with_ext);
             $personal_info->image = $filename_with_ext;
         }
-        $personal_info->save();
-        return successResponseJson($cv->personalInfo, 'Your personal information updated');
+        $result = $personal_info->save();
+
+        if($result){
+            return successResponseJson(new PersonalInfoResource($personal_info), 'Your personal information updated');
+        }
+        return errorResponseJson('Something went wrong', 500);
     }
 }

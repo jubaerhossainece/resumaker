@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AwardResource;
 use App\Models\Award;
 use App\Models\CvUser;
-use App\Models\User;
-use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 
 class AwardController extends Controller
@@ -14,7 +13,7 @@ class AwardController extends Controller
     public function get($id)
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('awards')->firstOrFail();
-        return successResponseJson($cv->awards);
+        return successResponseJson(AwardResource::Collection($cv->awards));
     }
 
 
@@ -34,9 +33,9 @@ class AwardController extends Controller
         $award->award_details = $request->award_details;
         $award->awarded_by = $request->awarded_by;
         $award->awarded_date = $request->awarded_date;
-        $cv->awards()->save($award);
+        $data = $cv->awards()->save($award);
 
-        return successResponseJson($award, 'Your award information saved in database');
+        return successResponseJson(new AwardResource($data), 'Your award information saved in database');
     }
 
 
@@ -57,9 +56,14 @@ class AwardController extends Controller
         $award->award_details = $request->award_details;
         $award->awarded_by = $request->awarded_by;
         $award->awarded_date = $request->awarded_date;
-        $award->save();
+        $result = $award->save();
 
-        return successResponseJson($cv->awards()->findOrFail($award_id), 'Your award information updated');    
+        if($result){
+            return successResponseJson(new AwardResource($award), 'Your award information updated');
+        }
+        
+        return errorResponseJson('Something went wrong', 500);
+
     }
 
     public function destroy($id, $award_id)
@@ -68,6 +72,6 @@ class AwardController extends Controller
         
         $award = $cv->awards()->findOrFail($award_id);
         $award->delete();
-        return successResponseJson($cv->awards()->get(), 'Your award information deleted');
+        return successResponseJson(AwardResource::collection($cv->awards()->get()), 'Your award information deleted');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CertificationResource;
 use App\Models\Certification;
 use App\Models\CvUser;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class CertificationController extends Controller
     public function get($id)
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('certifications')->firstOrFail();
-        return successResponseJson($cv->certifications);
+        return successResponseJson(CertificationResource::collection($cv->certifications));
     }
 
 
@@ -36,8 +37,9 @@ class CertificationController extends Controller
         $certification->issue_date = $request->issue_date;
         $certification->exp_date = $request->exp_date;
         $certification->is_no_exp = $request->is_no_exp;
-        $cv->certifications()->save($certification);
-        return successResponseJson($certification, 'Your certification information saved in database');
+        $data = $cv->certifications()->save($certification);
+        
+        return successResponseJson(new CertificationResource($data), 'Your certification information saved in database');
     }
 
 
@@ -61,9 +63,13 @@ class CertificationController extends Controller
         $certification->issue_date = $request->issue_date;
         $certification->exp_date = $request->exp_date;
         $certification->is_no_exp = $request->is_no_exp;
-        $certification->save();
+        $result = $certification->save();
 
-        return successResponseJson($cv->certifications()->findOrFail($cert_id), 'Your certification information updated in database');
+        if($result){
+            return successResponseJson(new CertificationResource($certification), 'Your certification information updated in database');
+        }
+
+        return errorResponseJson('Something went wrong', 500);
     }
 
 
@@ -73,6 +79,6 @@ class CertificationController extends Controller
         $certification = $cv->certifications()->findOrFail($cert_id);
         $certification->delete();
 
-        return successResponseJson($cv->certifications()->get(), 'Your certification information deleted');
+        return successResponseJson(CertificationResource::collection($cv->certifications()->get()), 'Your certification information deleted');
     }
 }
