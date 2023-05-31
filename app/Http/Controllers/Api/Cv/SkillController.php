@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Cv;
 use App\Http\Controllers\Controller;
 use App\Models\CvUser;
 use App\Models\Skill;
-use App\Models\Skillable;
 use App\Models\Technology;
 use Illuminate\Http\Request;
 
@@ -14,7 +13,7 @@ class SkillController extends Controller
     public function get($id)
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('skills')->firstOrFail();
-        return successResponseJson($cv->skills);
+        return successResponseJson(['skill' => $cv->skills, 'technology' => $cv->technologies]);
     }
 
 
@@ -30,29 +29,28 @@ class SkillController extends Controller
         //store and update skills
         $skill_array = [];
         for ($i=0; $i < count($request->skill); $i++) { 
-            $array[] = array(
-                'name' => ucfirst(strtolower($request->skill[$i]))
+            $skill_array[] = array(
+                'name' => ucwords(strtolower($request->skill[$i]))
             );
         }
 
-        Skill::upsert($skill_array, ["name"]);
-
+        Skill::insertOrIgnore($skill_array);
         $skills = Skill::whereIn('name', $request->skill)->pluck('id')->all();
         $cv->skills()->sync($skills);
 
         //store or update technologies
-        $technology_array = [];
-        for ($i=0; $i < count($request->skill); $i++) { 
-            $array[] = array(
-                'name' => ucfirst(strtolower($request->skill[$i]))
+        $tech_array = [];
+        for ($i=0; $i < count($request->technology); $i++) { 
+            $tech_array[] = array(
+                'name' => ucwords(strtolower($request->technology[$i]))
             );
         }
 
-        Technology::upsert($technology_array, ["name"]);
-
+        Technology::insertOrIgnore($tech_array);
         $technologies = Technology::whereIn('name', $request->technology)->pluck('id')->all();
         $cv->technologies()->sync($technologies);
-        return successResponseJson($cv->technologies, 'Your skill information saved in database.');
+
+        return successResponseJson([$cv->technologies, $cv->skills], 'Your skill information saved in database.');
         
     }
 

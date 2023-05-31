@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\Resume;
 
 use App\Http\Controllers\Controller;
 use App\Models\ResumeUser;
+use App\Models\Skill;
+use App\Models\Technology;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -14,7 +16,7 @@ class SkillController extends Controller
         $resume = ResumeUser::where([
             'id' => $id,
             'user_id' => auth()->user()->id,
-        ])->select('skills', 'user_id', 'id')->first();
+        ])->first();
 
         if($resume){
             return successResponseJson($resume->skills);
@@ -27,27 +29,37 @@ class SkillController extends Controller
     public function save(Request $request, $id)
     {
         $request->validate([
-            'skill' => 'required|string'
+            'skill' => 'required|array',
+            'technology' => 'nullable|array'
         ]);
         
-        $resume = ResumeUser::where([
-            'id' => $id,
-            'user_id' => auth()->user()->id,
-        ])->first();
+        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
 
-        if($resume->skills){
-            $arr = [];
-            $arr[uniqid()] = $request->skill;
-            
-            $item = array_merge($resume->skills, $arr);
-            $resume->skills = $item;
-            $resume->save();
-        }else{
-            $item = [];
-            $item[uniqid()] = $request->skill;
-            $resume->skills = $item;
-            $resume->save();
+        //store and update skills
+        $skill_array = [];
+        for ($i=0; $i < count($request->skill); $i++) { 
+            $skill_array[] = array(
+                'name' => ucwords(strtolower($request->skill[$i]))
+            );
         }
+
+        Skill::insertOrIgnore($skill_array);
+        $skills = Skill::whereIn('name', $request->skill)->pluck('id')->all();
+        $resume->skills()->sync($skills);
+
+        //store or update technologies
+        $tech_array = [];
+        for ($i=0; $i < count($request->technology); $i++) { 
+            $tech_array[] = array(
+                'name' => ucwords(strtolower($request->technology[$i]))
+            );
+        }
+
+        Technology::insertOrIgnore($tech_array);
+        $technologies = Technology::whereIn('name', $request->technology)->pluck('id')->all();
+        $resume->technologies()->sync($technologies);
+
+        return successResponseJson([$resume->technologies, $resume->skills], 'Your skill information saved in database.');
 
         return successResponseJson($resume->skills, 'Your skill information saved in database.');
     }
