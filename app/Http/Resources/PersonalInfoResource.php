@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class PersonalInfoResource extends JsonResource
 {
@@ -18,9 +19,16 @@ class PersonalInfoResource extends JsonResource
             return [];
         }
 
+        $url = $request->getSchemeAndHttpHost();
+        if($this->personal_infoable_type == 'App\Models\CvUser'){
+            $path = 'public/cv/userImage';
+        }else{
+            $path = 'public/resume/userImage';
+        }
+
         return [
             'id' => $this->id,
-            'image' => $this->image,
+            'image' => $this->image ? $url.Storage::url($path.'/'.$this->image) : null,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'profession' => $this->profession,

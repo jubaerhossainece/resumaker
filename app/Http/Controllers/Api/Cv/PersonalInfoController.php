@@ -14,8 +14,8 @@ class PersonalInfoController extends Controller
     public function get($id)
     {
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
-        $data = $cv->personalInfo;
-        return successResponseJson(new PersonalInfoResource($data));
+        
+        return successResponseJson(new PersonalInfoResource($cv->personalInfo));
     }
 
 
@@ -41,7 +41,7 @@ class PersonalInfoController extends Controller
         $cv->user_id = auth()->user()->id;
         $cv->template_id = $request->template_id;
         $cv->save();
-        
+
         $social_links = json_decode($request->social_links);
 
         $personal_info = new PersonalInfo;

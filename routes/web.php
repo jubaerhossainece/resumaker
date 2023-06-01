@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
+// Route::get('/test', function($request){
+//     return $url = $request->server();
+// });
 
 Route::get(
     '/clear-cache',
