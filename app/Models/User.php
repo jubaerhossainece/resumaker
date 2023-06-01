@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,7 +25,7 @@ class User extends Authenticatable
         'email',
         'provider_id',
         'password',
-        'provider_id'
+        'google2fa_secret'
     ];
 
     /**
@@ -55,6 +56,20 @@ class User extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    /** 
+     * Interact with the user's first name.
+     *
+     * @param  string  $value
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function google2faSecret(): Attribute
+    {
+        // return new Attribute(
+        //     get: fn ($value) =>  decrypt($value),
+        //     set: fn ($value) =>  encrypt($value),
+        // );
     }
 
     public function projects()
