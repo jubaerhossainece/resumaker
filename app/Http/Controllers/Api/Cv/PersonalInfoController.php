@@ -13,9 +13,9 @@ class PersonalInfoController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('personalInfo')->firstOrFail();
-
-        return successResponseJson(new PersonalInfoResource($cv->personalInfo));
+        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $data = $cv->personalInfo;
+        return successResponseJson(new PersonalInfoResource($data));
     }
 
 
@@ -36,10 +36,13 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
+
         $cv = new CvUser;
         $cv->user_id = auth()->user()->id;
         $cv->template_id = $request->template_id;
         $cv->save();
+        
+        $social_links = json_decode($request->social_links);
 
         $personal_info = new PersonalInfo;
         $personal_info->first_name = $request->first_name;
@@ -51,7 +54,7 @@ class PersonalInfoController extends Controller
         $personal_info->country = $request->country;
         $personal_info->post_code = $request->post_code;
         $personal_info->about = $request->about;
-        $personal_info->social_links = $request->social_links;
+        $personal_info->social_links = $social_links;
 
         if ($request->hasFile('image')) {
             $path = 'public/cv/userImage';
@@ -71,7 +74,7 @@ class PersonalInfoController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $info_id)
     {
         $request->validate([
             'image' => 'image',
@@ -89,7 +92,9 @@ class PersonalInfoController extends Controller
 
         $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
         
-        $personal_info = $cv->personalInfo;
+        $personal_info = $cv->personalInfo()->findOrFail($info_id);
+        
+        $social_links = json_decode($request->social_links);
         $personal_info->first_name = $request->first_name;
         $personal_info->last_name = $request->last_name;
         $personal_info->email = $request->email;
@@ -99,7 +104,7 @@ class PersonalInfoController extends Controller
         $personal_info->country = $request->country;
         $personal_info->post_code = $request->post_code;
         $personal_info->about = $request->about;
-        $personal_info->social_links = $request->social_links;
+        $personal_info->social_links = $social_links;
 
         if ($request->hasFile('image')) {
             $path = 'public/cv/userImage';

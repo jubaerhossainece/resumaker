@@ -42,6 +42,7 @@ class PersonalInfoController extends Controller
         $resume->template_id = $request->template_id;
         $resume->save();
 
+        $social_links = json_decode($request->social_links);
         $personal_info = new PersonalInfo();
         $personal_info->first_name = $request->first_name;
         $personal_info->last_name = $request->last_name;
@@ -52,7 +53,7 @@ class PersonalInfoController extends Controller
         $personal_info->country = $request->country;
         $personal_info->post_code = $request->post_code;
         $personal_info->about = $request->about;
-        $personal_info->social_links = $request->social_links;
+        $personal_info->social_links = $social_links;
 
         if ($request->hasFile('image')) {
             $path = 'public/resume/userImage';
@@ -72,7 +73,7 @@ class PersonalInfoController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $info_id)
     {
         $request->validate([
             'image' => 'image',
@@ -89,7 +90,9 @@ class PersonalInfoController extends Controller
         ]);
 
         $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $personal_info = $resume->personalInfo()->findOrFail($info_id);
         
+        $social_links = json_decode($request->social_links);
         $personal_info = $resume->personalInfo;
         $personal_info->first_name = $request->first_name;
         $personal_info->last_name = $request->last_name;
@@ -100,7 +103,7 @@ class PersonalInfoController extends Controller
         $personal_info->country = $request->country;
         $personal_info->post_code = $request->post_code;
         $personal_info->about = $request->about;
-        $personal_info->social_links = $request->social_links;
+        $personal_info->social_links = $social_links;
 
         if ($request->hasFile('image')) {
             $path = 'public/resume/userImage';

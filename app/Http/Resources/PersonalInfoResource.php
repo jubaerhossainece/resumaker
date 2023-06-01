@@ -14,7 +14,12 @@ class PersonalInfoResource extends JsonResource
      */
     public function toArray($request)
     {
+        if(is_null($this->resource)){
+            return [];
+        }
+
         return [
+            'id' => $this->id,
             'image' => $this->image,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,

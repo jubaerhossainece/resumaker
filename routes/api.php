@@ -49,7 +49,7 @@ Route::group(['prefix' => 'v1'], function () {
         /*=========== personal info api =================*/
         Route::get('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'get']);
         Route::post('cv/personal-info', [Cv\PersonalInfoController::class, 'store']);
-        Route::post('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'update']);
+        Route::post('cv/{id}/personal-info/{personal_info}', [Cv\PersonalInfoController::class, 'update']);
 
         /*=========== experience api =================*/
         Route::get('cv/{id}/experiences', [Cv\ExperienceController::class, 'get']);
@@ -107,7 +107,7 @@ Route::group(['prefix' => 'v1'], function () {
         /*=========== personal info api =================*/
         Route::get('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'get']);
         Route::post('resume/personal-info', [Resume\PersonalInfoController::class, 'store']);
-        Route::post('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'update']);
+        Route::post('resume/{id}/personal-info/{personal_info}', [Resume\PersonalInfoController::class, 'update']);
 
         /*=========== experience api =================*/
         Route::get('resume/{id}/experiences', [Resume\ExperienceController::class, 'get']);
