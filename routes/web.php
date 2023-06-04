@@ -24,6 +24,7 @@ Route::get(
     }
 );
 
+
 Route::get('/sym-link', function(){
     Artisan::call('storage:link');
     return response([
@@ -50,6 +51,6 @@ Route::group(['middleware' => '2fa'],function(){
 
     Route::get('/2fa-settings', [SettingController::class, 'index']);
 
-    Route::get('/2fa-status-change/{status}', [\App\Http\Controllers\SettingController::class,'enableOrDisable2fa'])->name('google2faStatusChange');
+    Route::get('/2fa-status-change/{status}', [SettingController::class,'enableOrDisable2fa'])->name('google2faStatusChange');
 });
 

@@ -36,7 +36,6 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
-
         $cv = new CvUser;
         $cv->user_id = auth()->user()->id;
         $cv->template_id = $request->template_id;
