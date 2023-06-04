@@ -30,7 +30,11 @@ Route::group(['prefix' => 'v1'], function () {
     route::post('reset-password-mail', [AuthController::class, 'resetPasswordMail'])->name('reset.password.mail');
 //    route::post('resend/verification-code', [AuthController::class, 'resendVerifyCode'])->name('code.resend');
     Route::post('password/reset', [AuthController::class, 'resetPassword'])->name('password.reset.submit');
-    /* ================================== auth API ends ==================================*/
+    /* ================================== auth API ends ===================================*/
+
+    /*==================================== Settings Api ==================================*/
+    Route::get('/settings/advertisement', [SettingController::class, 'advertisement']);
+
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('user/logout', [AuthController::class, 'logout']);
@@ -70,10 +74,10 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'update']);
         Route::delete('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'destroy']);
         //technology
-        Route::get('cv/{id}/technologies', [Cv\TechnologyController::class, 'get']);
-        Route::post('cv/{id}/technology', [Cv\TechnologyController::class, 'save']);
-        Route::put('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'update']);
-        Route::delete('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'destroy']);
+        // Route::get('cv/{id}/technologies', [Cv\TechnologyController::class, 'get']);
+        // Route::post('cv/{id}/technology', [Cv\TechnologyController::class, 'save']);
+        // Route::put('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'update']);
+        // Route::delete('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'destroy']);
 
         /*=========== certification api =================*/
         Route::get('cv/{id}/certifications', [Cv\CertificationController::class, 'get']);
@@ -128,10 +132,10 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'update']);
         Route::delete('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'destroy']);
         //technology
-        Route::get('resume/{id}/technologies', [Resume\TechnologyController::class, 'get']);
-        Route::post('resume/{id}/technology', [Resume\TechnologyController::class, 'save']);
-        Route::put('resume/{id}/technology/{technology}', [Resume\TechnologyController::class, 'update']);
-        Route::delete('resume/{id}/technology/{technology}', [Resume\TechnologyController::class, 'destroy']);
+        // Route::get('resume/{id}/technologies', [Resume\TechnologyController::class, 'get']);
+        // Route::post('resume/{id}/technology', [Resume\TechnologyController::class, 'save']);
+        // Route::put('resume/{id}/technology/{technology}', [Resume\TechnologyController::class, 'update']);
+        // Route::delete('resume/{id}/technology/{technology}', [Resume\TechnologyController::class, 'destroy']);
     });
 
 });

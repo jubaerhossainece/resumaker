@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,7 +23,9 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RegistersUsers{
+        register as registration;
+    }
 
     /**
      * Where to redirect users after registration.
@@ -69,5 +72,44 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+
+    /**
+     * Write code on Method
+     *
+     * @return response()
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+  
+        $google2fa = app('pragmarx.google2fa');
+  
+        $registration_data = $request->all();
+  
+        $registration_data["google2fa_secret"] = $google2fa->generateSecretKey();
+  
+        $request->session()->flash('registration_data', $registration_data);
+  
+        $QR_Image = $google2fa->getQRCodeInline(
+            config('app.name'),
+            $registration_data['email'],
+            $registration_data['google2fa_secret']
+        );
+          
+        return view('google2fa.register', ['QR_Image' => $QR_Image, 'secret' => $registration_data['google2fa_secret']]);
+    }
+  
+    /**
+     * Write code on Method
+     *
+     * @return response()
+     */
+    public function completeRegistration(Request $request)
+    {        
+        $request->merge(session('registration_data'));
+  
+        return $this->registration($request);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/test', function($request){
@@ -36,10 +37,19 @@ require __DIR__ . '/auth.php';
 // Route::get('login/{provider}', [Api\SocialAuthController::class, 'redirectToProvider']);
 // Route::get('login/{provider}/callback', [Api\SocialAuthController::class, 'handleProviderCallback']);
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard.index');
-});
+// Route::group(['middleware' => 'auth'], function () {
+// });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('verify-google-2fa', [\App\Http\Controllers\Auth\TwoFactorAuthController::class,'verify2faPage'])->name('verify2faPage');
+Route::post('verify-2fa-code', [\App\Http\Controllers\Auth\TwoFactorAuthController::class,'loginVerifyWith2fa'])->name('verifyCode');
+
+Route::group(['middleware' => '2fa'],function(){
+    Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard.index');
+
+    Route::get('/2fa-settings', [SettingController::class, 'index']);
+
+    Route::get('/2fa-status-change/{status}', [\App\Http\Controllers\SettingController::class,'enableOrDisable2fa'])->name('google2faStatusChange');
+});
+

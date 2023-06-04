@@ -57,21 +57,7 @@ class User extends Authenticatable
     {
         $this->attributes['password'] = bcrypt($value);
     }
-
-    /** 
-     * Interact with the user's first name.
-     *
-     * @param  string  $value
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function google2faSecret(): Attribute
-    {
-        // return new Attribute(
-        //     get: fn ($value) =>  decrypt($value),
-        //     set: fn ($value) =>  encrypt($value),
-        // );
-    }
-
+    
     public function projects()
     {
         return $this->hasMany(Project::class);
