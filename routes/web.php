@@ -46,7 +46,7 @@ Auth::routes();
 Route::get('verify-google-2fa', [\App\Http\Controllers\Auth\TwoFactorAuthController::class,'verify2faPage'])->name('verify2faPage');
 Route::post('verify-2fa-code', [\App\Http\Controllers\Auth\TwoFactorAuthController::class,'loginVerifyWith2fa'])->name('verifyCode');
 
-Route::group(['middleware' => '2fa'],function(){
+Route::group(['middleware' => ['auth','2fa']],function(){
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::get('/2fa-settings', [SettingController::class, 'index']);
