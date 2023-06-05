@@ -26,8 +26,8 @@ class AuthController extends Controller
     {
         DB::beginTransaction();
         try {
-            if($request->has('guest_id') && $request->guest_id){
-                $user = User::where('guest_id', $request->guest_id)->first();
+            if($request->hasHeader('guest-id') && $request->header('guest-id')){
+                $user = User::where('guest_id', $request->header('guest-id'))->first();
                 if($user){
                     $user->name = $request->name;
                     $user->email = $request->email;
@@ -51,7 +51,7 @@ class AuthController extends Controller
             'access_token' => $user->createToken('authToken')->plainTextToken,
             'token_type' => 'Bearer',
             'user' => new UserResource($user)
-        ], 'registration Successful');
+        ], 'Registration Successful');
         // return successResponseJson(['user' => new UserResource($user)], 'Registration success');
     }
 

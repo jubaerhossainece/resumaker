@@ -42,7 +42,7 @@ class PersonalInfoController extends Controller
         ]);
 
         //find the user using ip address and device id or create one
-        $user = auth()->user();
+        $user = auth('sanctum')->user();
         if(!$user){
             $guest_id = md5($request->userAgent().$request->ip());
 
@@ -52,6 +52,9 @@ class PersonalInfoController extends Controller
                     $service = new GuestService();
                     $user = $service->createGuest($guest_id);
                 }
+            }else{
+                $service = new GuestService();
+                $user = $service->createGuest($guest_id);
             }
         }
 

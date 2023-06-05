@@ -17,14 +17,16 @@ class GuestMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        app()->singleton('auth_user', function () use ($request) {
-            $user = auth()->user();
-            if(!$user){
-                if($request->hasHeader('guest-id') && $request->header('guest-id')){
-                    return User::where('guest_id', $request->header('guest-id'))->firstOrFail();
-                }
+        $user = auth('sanctum')->user();
+        if(!$user){
+            if($request->hasHeader('guest-id') && $request->header('guest-id')){
+                $user = User::where('guest_id', $request->header('guest-id'))->firstOrFail();
+            }else{
+                return errorResponseJson('No data found', 422);
             }
+        }
 
+        app()->singleton('auth_user', function () use ($user) {
             return $user;
         });
 
