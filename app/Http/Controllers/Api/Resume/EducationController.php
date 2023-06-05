@@ -13,7 +13,8 @@ class EducationController extends Controller
 {
     public function get($id)
     {
-        $cv = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('education')->firstOrFail();
+        $user = app('auth_user');
+        $cv = ResumeUser::where(['id' => $id,'user_id' => $user->id])->with('education')->firstOrFail();
 
         return successResponseJson(EducationResource::collection($cv->education));
     }
@@ -32,7 +33,8 @@ class EducationController extends Controller
             'is_current' => 'required|boolean',
         ]);
         
-        $cv = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $education = new Education();
         $education->study_field = $request->study_field;
@@ -61,7 +63,8 @@ class EducationController extends Controller
             'is_current' => 'required|boolean',
         ]);
 
-        $cv = ResumeUser::where(['id' => $id, 'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = ResumeUser::where(['id' => $id, 'user_id' => $user->id])->firstOrFail();
         
         $education = $cv->education()->findOrFail($edu_id);
         $education->study_field = $request->study_field;
@@ -83,7 +86,8 @@ class EducationController extends Controller
 
     public function destroy($id, $edu_id)
     {
-        $cv = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $education = $cv->education()->findOrFail($edu_id);
         $education->delete();

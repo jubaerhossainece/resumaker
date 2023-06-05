@@ -6,13 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AwardResource;
 use App\Models\Award;
 use App\Models\CvUser;
+use App\Models\User;
+use App\Services\GuestService;
 use Illuminate\Http\Request;
 
 class AwardController extends Controller
 {
-    public function get($id)
+    public function get(Request $request, $id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('awards')->firstOrFail();
+        $user = app('auth_user');
+        
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->with('awards')->firstOrFail();
         return successResponseJson(AwardResource::Collection($cv->awards));
     }
 
@@ -25,8 +29,9 @@ class AwardController extends Controller
             'awarded_by' => 'required|string',
             'awarded_date' => 'required|date',
         ]);
-        
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $award = new Award();
         $award->award_name = $request->award_name;
@@ -48,7 +53,8 @@ class AwardController extends Controller
             'awarded_date' => 'required|date',
         ]);
         
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $award = $cv->awards()->findOrFail($award_id);
         
@@ -68,7 +74,8 @@ class AwardController extends Controller
 
     public function destroy($id, $award_id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $award = $cv->awards()->findOrFail($award_id);
         $award->delete();

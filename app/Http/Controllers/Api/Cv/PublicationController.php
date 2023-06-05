@@ -12,7 +12,8 @@ class PublicationController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('publications')->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->with('publications')->firstOrFail();
 
         return successResponseJson(PublicationResource::collection($cv->publications));
     }
@@ -29,7 +30,8 @@ class PublicationController extends Controller
             'description' => 'required|string',
         ]);
         
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $publication = new Publication();
         $publication->publication_title = $request->publication_title;
@@ -55,7 +57,8 @@ class PublicationController extends Controller
             'description' => 'required|string',
         ]);
         
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $publication = $cv->publications()->findOrFail($pub_id);
         $publication->publication_title = $request->publication_title;
@@ -74,7 +77,8 @@ class PublicationController extends Controller
 
     public function destroy($id, $pub_id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $publication = $cv->publications()->findOrFail($pub_id);
         $publication->delete();

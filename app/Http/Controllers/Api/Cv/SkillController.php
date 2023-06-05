@@ -14,7 +14,8 @@ class SkillController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('skills')->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->with('skills')->firstOrFail();
         return successResponseJson(['skill' => SkillResource::collection($cv->skills), 'technology' => TechnologyResource::collection($cv->technologies)]);
     }
 
@@ -26,7 +27,8 @@ class SkillController extends Controller
             'technology' => 'nullable|array'
         ]);
         
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         //store and update skills
         $skill_array = [];

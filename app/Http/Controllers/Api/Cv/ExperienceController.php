@@ -12,7 +12,8 @@ class ExperienceController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('experiences')->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->with('experiences')->firstOrFail();
         
         return successResponseJson(ExperienceResource::collection($cv->experiences));
     }
@@ -30,7 +31,8 @@ class ExperienceController extends Controller
             'country' => 'required|string',
         ]);
         
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         $experience = new Experience();
         $experience->organization = $request->organization;
         $experience->job_title = $request->job_title;
@@ -57,7 +59,8 @@ class ExperienceController extends Controller
             'country' => 'required|string',
         ]);
 
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $experience = $cv->experiences()->findOrFail($exp_id);
         $experience->organization = $request->organization;
@@ -77,7 +80,8 @@ class ExperienceController extends Controller
 
     public function destroy($id, $exp_id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $exp = $cv->experiences()->findOrFail($exp_id);
         $exp->delete();

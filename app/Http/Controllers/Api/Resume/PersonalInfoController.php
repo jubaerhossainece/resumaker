@@ -7,6 +7,7 @@ use App\Http\Resources\PersonalInfoResource;
 use App\Http\Resources\UserResource;
 use App\Models\PersonalInfo;
 use App\Models\ResumeUser;
+use App\Models\User;
 use App\Services\GuestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,8 @@ class PersonalInfoController extends Controller
 {
     public function get($id)
     {
-        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('personalInfo')->firstOrFail();
+        $user = app('auth_user');
+        $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->with('personalInfo')->firstOrFail();
 
         return successResponseJson(new PersonalInfoResource($resume->personalInfo));
     }
@@ -39,19 +41,18 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
-        $user = auth()->user();
         //find the user using ip address and device id or create one
+        $user = auth()->user();
         if(!$user){
             $guest_id = md5($request->userAgent().$request->ip());
-            $guest = new GuestService();
-            $user = $guest->createGuest($guest_id);
 
-            $auth_info = [
-                'access_token' => $user->createToken('authToken')->plainTextToken,
-                'token_type' => 'Bearer',
-                'user' => new UserResource($user),
-                'user_type' => 'guest'
-            ];
+            if($request->hasHeader('guest-id') && $request->header('guest-id')){
+                $user = User::where('guest_id', $request->header('guest-id'))->first();
+                if(!$user){
+                    $service = new GuestService();
+                    $user = $service->createGuest($guest_id);
+                }
+            }
         }
 
         $resume = new ResumeUser;
@@ -83,7 +84,7 @@ class PersonalInfoController extends Controller
 
         $resume->personalInfo()->save($personal_info);
         $data = [
-            'auth_info' => $auth_info,
+            'guest_id' => $user->guest_id,
             'resume_id' => $resume->id,
             'personal_info' => new PersonalInfoResource($resume->personalInfo),
         ];
@@ -107,7 +108,8 @@ class PersonalInfoController extends Controller
             'social_links' => 'required',
         ]);
 
-        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         $personal_info = $resume->personalInfo()->findOrFail($info_id);
         
         $social_links = json_decode($request->social_links);

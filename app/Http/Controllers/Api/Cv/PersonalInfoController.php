@@ -16,7 +16,8 @@ class PersonalInfoController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         return successResponseJson(new PersonalInfoResource($cv->personalInfo));
     }
@@ -38,20 +39,20 @@ class PersonalInfoController extends Controller
             'social_links' => 'required',
             'template_id' => 'required',
         ]);
+
         
-        $user = auth()->user();
         //find the user using ip address and device id or create one
+        $user = auth()->user();
         if(!$user){
             $guest_id = md5($request->userAgent().$request->ip());
-            $guest = new GuestService();
-            $user = $guest->createGuest($guest_id);
 
-            $auth_info = [
-                'access_token' => $user->createToken('authToken')->plainTextToken,
-                'token_type' => 'Bearer',
-                'user' => new UserResource($user),
-                'user_type' => 'guest'
-            ];
+            if($request->hasHeader('guest-id') && $request->header('guest-id')){
+                $user = User::where('guest_id', $request->header('guest-id'))->first();
+                if(!$user){
+                    $service = new GuestService();
+                    $user = $service->createGuest($guest_id);
+                }
+            }
         }
 
         $cv = new CvUser;
@@ -84,7 +85,7 @@ class PersonalInfoController extends Controller
         $info = $cv->personalInfo()->save($personal_info);
  
         $data = [
-            'auth_info' => $auth_info ?? null,
+            'guest_id' => $user->guest_id ?? null,
             'cv_id' => $cv->id,
             'personal_info' => new PersonalInfoResource($info),
         ];
@@ -109,7 +110,8 @@ class PersonalInfoController extends Controller
             'social_links' => 'required',
         ]);
 
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $personal_info = $cv->personalInfo()->findOrFail($info_id);
         

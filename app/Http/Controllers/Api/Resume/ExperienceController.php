@@ -13,7 +13,8 @@ class ExperienceController extends Controller
 {
     public function get($id)
     {
-        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('experiences')->firstOrFail();
+        $user = app('auth_user');
+        $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->with('experiences')->firstOrFail();
 
         return successResponseJson(ExperienceResource::collection($resume->experiences));
 
@@ -32,7 +33,8 @@ class ExperienceController extends Controller
             'country' => 'required|string',
         ]);
         
-        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $experience = new Experience();
         $experience->organization = $request->organization;
@@ -60,7 +62,8 @@ class ExperienceController extends Controller
             'country' => 'required|string',
         ]);
 
-        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $experience = $resume->experiences()->findOrFail($exp_id);
         $experience->organization = $request->organization;
@@ -80,7 +83,8 @@ class ExperienceController extends Controller
 
     public function destroy($id, $exp_id)
     {
-        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         $exp = $resume->experiences()->findOrFail($exp_id);
         $exp->delete();
 

@@ -12,7 +12,8 @@ class CertificationController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('certifications')->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->with('certifications')->firstOrFail();
         return successResponseJson(CertificationResource::collection($cv->certifications));
     }
 
@@ -28,7 +29,8 @@ class CertificationController extends Controller
             'is_no_exp' => 'required|boolean',
         ]);
         
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $certification = new Certification();
         $certification->name = $request->name;
@@ -54,7 +56,8 @@ class CertificationController extends Controller
             'is_no_exp' => 'required|boolean',
         ]);
 
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $certification = $cv->certifications()->findOrFail($cert_id);
         $certification->name = $request->name;
@@ -75,7 +78,8 @@ class CertificationController extends Controller
 
     public function destroy($id, $cert_id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         $certification = $cv->certifications()->findOrFail($cert_id);
         $certification->delete();
 

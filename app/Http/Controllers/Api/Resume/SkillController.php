@@ -15,7 +15,8 @@ class SkillController extends Controller
 {
     public function get($id)
     {
-        $resume = ResumeUser::where(['id' => $id, 'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $resume = ResumeUser::where(['id' => $id, 'user_id' => $user->id])->firstOrFail();
 
         return successResponseJson(['skill' => SkillResource::collection($resume->skills), 'technology' => TechnologyResource::collection($resume->technologies)]);
 
@@ -29,7 +30,8 @@ class SkillController extends Controller
             'technology' => 'nullable|array'
         ]);
         
-        $resume = ResumeUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         //store and update skills
         $skill_array = [];
@@ -57,47 +59,4 @@ class SkillController extends Controller
 
         return successResponseJson(['skill' => SkillResource::collection($resume->skills), 'technology' => TechnologyResource::collection($resume->technologies)], 'Your skill information saved in database.');
     }
-
-
-    // public function update(Request $request, $id, $skill_key)
-    // {
-    //     $request->validate([
-    //         'skill' => 'required|string'
-    //     ]);
-        
-    //     $resume = ResumeUser::where([
-    //         'id' => $id,
-    //         'user_id' => auth()->user()->id,
-    //     ])->first();
-
-    //     if($resume){
-    //         $skill_list = $resume->skills;
-    //         $skill_list[$skill_key] = $request->skill;
-            
-    //         $resume->skills = $skill_list;
-    //         $resume->save();
-    //         return successResponseJson($resume->skills, 'Your skill information saved in database.');
-    //     }else{
-    //         return errorResponseJson('No resume found.', 422);
-    //     }
-    // }
-
-
-    // public function destroy($id, $skill_key)
-    // {   
-    //     $resume = ResumeUser::where([
-    //         'id' => $id,
-    //         'user_id' => auth()->user()->id,
-    //     ])->first();
-
-    //     if($resume){
-    //         $skill_list = $resume->skills;
-    //         unset($skill_list[$skill_key]);
-    //         $resume->skills = $skill_list;
-    //         $resume->save();
-    //         return successResponseJson($resume->skills, 'Your skill information deleted.');
-    //     }else{
-    //         return errorResponseJson('No resume found.', 422);
-    //     }
-    // }
 }

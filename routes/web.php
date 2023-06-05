@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-
+Route::get('/something', function(){
+    return 'hello';
+});
 Route::get(
     '/clear-cache',
     function () {

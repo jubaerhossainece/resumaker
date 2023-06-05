@@ -12,7 +12,8 @@ class ReferenceController extends Controller
 {
     public function get($id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->with('references')->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->with('references')->firstOrFail();
         return successResponseJson(ReferenceResource::collection($cv->references));
     }
 
@@ -27,7 +28,8 @@ class ReferenceController extends Controller
             'email' => 'required|email',
         ]);
         
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $reference = new Reference();
         $reference->name = $request->name;
@@ -51,7 +53,8 @@ class ReferenceController extends Controller
             'email' => 'required|email',
         ]);
         
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $reference = $cv->references()->findOrFail($ref_id);
         $reference->name = $request->name;
@@ -69,7 +72,8 @@ class ReferenceController extends Controller
 
     public function destroy($id, $ref_id)
     {
-        $cv = CvUser::where(['id' => $id,'user_id' => auth()->user()->id])->firstOrFail();
+        $user = app('auth_user');
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $reference = $cv->references()->findOrFail($ref_id);
         $reference->delete();

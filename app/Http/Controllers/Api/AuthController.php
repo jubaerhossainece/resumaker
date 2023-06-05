@@ -31,6 +31,7 @@ class AuthController extends Controller
                 if($user){
                     $user->name = $request->name;
                     $user->email = $request->email;
+                    $user->phone = $request->phone;
                     $user->is_guest = false;
                     $user->password = $request->password;
                     $user->save();
