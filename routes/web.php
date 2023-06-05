@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/test', function($request){
-//     return $url = $request->server();
-// });
 
 Route::get(
     '/clear-cache',
@@ -24,6 +21,7 @@ Route::get(
     }
 );
 
+Route::get('/test', [TestController::class, 'test']);
 
 Route::get('/sym-link', function(){
     Artisan::call('storage:link');

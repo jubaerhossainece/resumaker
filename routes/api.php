@@ -36,101 +36,104 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('/settings/advertisement', [SettingController::class, 'advertisement']);
 
 
+    /* ==========user profile api=========== */
+    Route::get('user/info', [ProfileController::class, 'myInfo']);
+    Route::post('/profile', [ProfileController::class, 'updateProfile']);
+    Route::post('/change-password', [ProfileController::class, 'changePassword']);
+    /* =========end user profile api========== */
+    
+    /*===============================*/
+    /*=========== CV Apis ===========*/
+    /*===============================*/
+    Route::get('/cv/{id}', [CvController::class, 'show']);
+
+    /*=========== personal info api =================*/
+    Route::get('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'get']);
+    Route::post('cv/personal-info', [Cv\PersonalInfoController::class, 'store']);
+    Route::post('cv/{id}/personal-info/{personal_info}', [Cv\PersonalInfoController::class, 'update']);
+
+    /*=========== experience api =================*/
+    Route::get('cv/{id}/experiences', [Cv\ExperienceController::class, 'get']);
+    Route::post('cv/{id}/experience', [Cv\ExperienceController::class, 'save']);
+    Route::put('cv/{id}/experience/{experience}', [Cv\ExperienceController::class, 'update']);
+    Route::delete('cv/{id}/experience/{experience}', [Cv\ExperienceController::class, 'destroy']);
+
+    /*=========== education api =================*/
+    Route::get('cv/{id}/education', [Cv\EducationController::class, 'get']);
+    Route::post('cv/{id}/education', [Cv\EducationController::class, 'save']);
+    Route::put('cv/{id}/education/{education}', [Cv\EducationController::class, 'update']);
+    Route::delete('cv/{id}/education/{education}', [Cv\EducationController::class, 'destroy']);
+
+    /*=========== api for skills section =================*/
+    //skill
+    Route::get('cv/{id}/skills', [Cv\SkillController::class, 'get']);
+    Route::post('cv/{id}/skill', [Cv\SkillController::class, 'save']);
+    Route::put('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'update']);
+    Route::delete('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'destroy']);
+    //technology
+    // Route::get('cv/{id}/technologies', [Cv\TechnologyController::class, 'get']);
+    // Route::post('cv/{id}/technology', [Cv\TechnologyController::class, 'save']);
+    // Route::put('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'update']);
+    // Route::delete('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'destroy']);
+
+    /*=========== certification api =================*/
+    Route::get('cv/{id}/certifications', [Cv\CertificationController::class, 'get']);
+    Route::post('cv/{id}/certification', [Cv\CertificationController::class, 'save']);
+    Route::put('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'update']);
+    Route::delete('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'destroy']);
+
+    /*=========== award api =================*/
+    Route::get('cv/{id}/awards', [Cv\AwardController::class, 'get']);
+    Route::post('cv/{id}/award', [Cv\AwardController::class, 'save']);
+    Route::put('cv/{id}/award/{award}', [Cv\AwardController::class, 'update']);
+    Route::delete('cv/{id}/award/{award}', [Cv\AwardController::class, 'destroy']);
+
+    /*=========== publications api =================*/
+    Route::get('cv/{id}/publications', [Cv\PublicationController::class, 'get']);
+    Route::post('cv/{id}/publication', [Cv\PublicationController::class, 'save']);
+    Route::put('cv/{id}/publication/{publication}', [Cv\PublicationController::class, 'update']);
+    Route::delete('cv/{id}/publication/{publication}', [Cv\PublicationController::class, 'destroy']);
+
+    /*=========== references api =================*/
+    Route::get('cv/{id}/references', [Cv\ReferenceController::class, 'get']);
+    Route::post('cv/{id}/reference', [Cv\ReferenceController::class, 'save']);
+    Route::put('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'update']);
+    Route::delete('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'destroy']);
+
+
+    /*===============================*/
+    /*=========== Resume Apis ===========*/
+    /*===============================*/
+
+    /*=========== personal info api =================*/
+    Route::get('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'get']);
+    Route::post('resume/personal-info', [Resume\PersonalInfoController::class, 'store']);
+    Route::post('resume/{id}/personal-info/{personal_info}', [Resume\PersonalInfoController::class, 'update']);
+
+    /*=========== experience api =================*/
+    Route::get('resume/{id}/experiences', [Resume\ExperienceController::class, 'get']);
+    Route::post('resume/{id}/experience', [Resume\ExperienceController::class, 'save']);
+    Route::put('resume/{id}/experience/{experience}', [Resume\ExperienceController::class, 'update']);
+    Route::delete('resume/{id}/experience/{experience}', [Resume\ExperienceController::class, 'destroy']);
+
+    /*=========== education api =================*/
+    Route::get('resume/{id}/education', [Resume\EducationController::class, 'get']);
+    Route::post('resume/{id}/education', [Resume\EducationController::class, 'save']);
+    Route::put('resume/{id}/education/{education}', [Resume\EducationController::class, 'update']);
+    Route::delete('resume/{id}/education/{education}', [Resume\EducationController::class, 'destroy']);
+
+    /*=========== skill api =================*/
+    //skill
+    Route::get('resume/{id}/skills', [Resume\SkillController::class, 'get']);
+    Route::post('resume/{id}/skill', [Resume\SkillController::class, 'save']);
+    Route::put('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'update']);
+    Route::delete('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'destroy']);
+
+
     Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('user/logout', [AuthController::class, 'logout']);
 
-        /* ==========user profile api=========== */
-        Route::get('user/info', [ProfileController::class, 'myInfo']);
-        Route::post('/profile', [ProfileController::class, 'updateProfile']);
-        Route::post('/change-password', [ProfileController::class, 'changePassword']);
-        /* =========end user profile api========== */
-        
-        /*===============================*/
-        /*=========== CV Apis ===========*/
-        /*===============================*/
-        Route::get('/cv/{id}', [CvController::class, 'show']);
 
-        /*=========== personal info api =================*/
-        Route::get('cv/{id}/personal-info', [Cv\PersonalInfoController::class, 'get']);
-        Route::post('cv/personal-info', [Cv\PersonalInfoController::class, 'store']);
-        Route::post('cv/{id}/personal-info/{personal_info}', [Cv\PersonalInfoController::class, 'update']);
-
-        /*=========== experience api =================*/
-        Route::get('cv/{id}/experiences', [Cv\ExperienceController::class, 'get']);
-        Route::post('cv/{id}/experience', [Cv\ExperienceController::class, 'save']);
-        Route::put('cv/{id}/experience/{experience}', [Cv\ExperienceController::class, 'update']);
-        Route::delete('cv/{id}/experience/{experience}', [Cv\ExperienceController::class, 'destroy']);
-
-        /*=========== education api =================*/
-        Route::get('cv/{id}/education', [Cv\EducationController::class, 'get']);
-        Route::post('cv/{id}/education', [Cv\EducationController::class, 'save']);
-        Route::put('cv/{id}/education/{education}', [Cv\EducationController::class, 'update']);
-        Route::delete('cv/{id}/education/{education}', [Cv\EducationController::class, 'destroy']);
-
-        /*=========== api for skills section =================*/
-        //skill
-        Route::get('cv/{id}/skills', [Cv\SkillController::class, 'get']);
-        Route::post('cv/{id}/skill', [Cv\SkillController::class, 'save']);
-        Route::put('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'update']);
-        Route::delete('cv/{id}/skill/{skill}', [Cv\SkillController::class, 'destroy']);
-        //technology
-        // Route::get('cv/{id}/technologies', [Cv\TechnologyController::class, 'get']);
-        // Route::post('cv/{id}/technology', [Cv\TechnologyController::class, 'save']);
-        // Route::put('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'update']);
-        // Route::delete('cv/{id}/technology/{technology}', [Cv\TechnologyController::class, 'destroy']);
-
-        /*=========== certification api =================*/
-        Route::get('cv/{id}/certifications', [Cv\CertificationController::class, 'get']);
-        Route::post('cv/{id}/certification', [Cv\CertificationController::class, 'save']);
-        Route::put('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'update']);
-        Route::delete('cv/{id}/certification/{certification}', [Cv\CertificationController::class, 'destroy']);
-
-        /*=========== award api =================*/
-        Route::get('cv/{id}/awards', [Cv\AwardController::class, 'get']);
-        Route::post('cv/{id}/award', [Cv\AwardController::class, 'save']);
-        Route::put('cv/{id}/award/{award}', [Cv\AwardController::class, 'update']);
-        Route::delete('cv/{id}/award/{award}', [Cv\AwardController::class, 'destroy']);
-
-        /*=========== publications api =================*/
-        Route::get('cv/{id}/publications', [Cv\PublicationController::class, 'get']);
-        Route::post('cv/{id}/publication', [Cv\PublicationController::class, 'save']);
-        Route::put('cv/{id}/publication/{publication}', [Cv\PublicationController::class, 'update']);
-        Route::delete('cv/{id}/publication/{publication}', [Cv\PublicationController::class, 'destroy']);
-
-        /*=========== references api =================*/
-        Route::get('cv/{id}/references', [Cv\ReferenceController::class, 'get']);
-        Route::post('cv/{id}/reference', [Cv\ReferenceController::class, 'save']);
-        Route::put('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'update']);
-        Route::delete('cv/{id}/reference/{reference}', [Cv\ReferenceController::class, 'destroy']);
-
-
-        /*===============================*/
-        /*=========== Resume Apis ===========*/
-        /*===============================*/
-
-        /*=========== personal info api =================*/
-        Route::get('resume/{id}/personal-info', [Resume\PersonalInfoController::class, 'get']);
-        Route::post('resume/personal-info', [Resume\PersonalInfoController::class, 'store']);
-        Route::post('resume/{id}/personal-info/{personal_info}', [Resume\PersonalInfoController::class, 'update']);
-
-        /*=========== experience api =================*/
-        Route::get('resume/{id}/experiences', [Resume\ExperienceController::class, 'get']);
-        Route::post('resume/{id}/experience', [Resume\ExperienceController::class, 'save']);
-        Route::put('resume/{id}/experience/{experience}', [Resume\ExperienceController::class, 'update']);
-        Route::delete('resume/{id}/experience/{experience}', [Resume\ExperienceController::class, 'destroy']);
-
-        /*=========== education api =================*/
-        Route::get('resume/{id}/education', [Resume\EducationController::class, 'get']);
-        Route::post('resume/{id}/education', [Resume\EducationController::class, 'save']);
-        Route::put('resume/{id}/education/{education}', [Resume\EducationController::class, 'update']);
-        Route::delete('resume/{id}/education/{education}', [Resume\EducationController::class, 'destroy']);
-
-        /*=========== skill api =================*/
-        //skill
-        Route::get('resume/{id}/skills', [Resume\SkillController::class, 'get']);
-        Route::post('resume/{id}/skill', [Resume\SkillController::class, 'save']);
-        Route::put('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'update']);
-        Route::delete('resume/{id}/skill/{skill}', [Resume\SkillController::class, 'destroy']);
         //technology
         // Route::get('resume/{id}/technologies', [Resume\TechnologyController::class, 'get']);
         // Route::post('resume/{id}/technology', [Resume\TechnologyController::class, 'save']);

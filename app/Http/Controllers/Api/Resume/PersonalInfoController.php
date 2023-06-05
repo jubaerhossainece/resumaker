@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\Resume;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PersonalInfoResource;
+use App\Http\Resources\UserResource;
 use App\Models\PersonalInfo;
 use App\Models\ResumeUser;
+use App\Services\GuestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
@@ -37,8 +39,23 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
+        $user = auth()->user();
+        //find the user using ip address and device id or create one
+        if(!$user){
+            $guest_id = md5($request->userAgent().$request->ip());
+            $guest = new GuestService();
+            $user = $guest->createGuest($guest_id);
+
+            $auth_info = [
+                'access_token' => $user->createToken('authToken')->plainTextToken,
+                'token_type' => 'Bearer',
+                'user' => new UserResource($user),
+                'user_type' => 'guest'
+            ];
+        }
+
         $resume = new ResumeUser;
-        $resume->user_id = auth()->user()->id;
+        $resume->user_id = $user->id;
         $resume->template_id = $request->template_id;
         $resume->save();
 
@@ -66,6 +83,7 @@ class PersonalInfoController extends Controller
 
         $resume->personalInfo()->save($personal_info);
         $data = [
+            'auth_info' => $auth_info,
             'resume_id' => $resume->id,
             'personal_info' => new PersonalInfoResource($resume->personalInfo),
         ];

@@ -26,7 +26,20 @@ class AuthController extends Controller
     {
         DB::beginTransaction();
         try {
-            $user = User::create($request->validated());
+            if($request->has('guest_id') && $request->guest_id){
+                $user = User::where('guest_id', $request->guest_id)->first();
+                if($user){
+                    $user->name = $request->name;
+                    $user->email = $request->email;
+                    $user->is_guest = false;
+                    $user->password = $request->password;
+                    $user->save();
+                }else{
+                    $user = User::create($request->validated());
+                }
+            }else{
+                $user = User::create($request->validated());
+            }
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();

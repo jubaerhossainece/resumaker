@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PersonalInfoResource;
+use App\Http\Resources\UserResource;
 use App\Models\CvUser;
 use App\Models\PersonalInfo;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Services\GuestService;
 
 class PersonalInfoController extends Controller
 {
@@ -35,9 +38,24 @@ class PersonalInfoController extends Controller
             'social_links' => 'required',
             'template_id' => 'required',
         ]);
+        
+        $user = auth()->user();
+        //find the user using ip address and device id or create one
+        if(!$user){
+            $guest_id = md5($request->userAgent().$request->ip());
+            $guest = new GuestService();
+            $user = $guest->createGuest($guest_id);
+
+            $auth_info = [
+                'access_token' => $user->createToken('authToken')->plainTextToken,
+                'token_type' => 'Bearer',
+                'user' => new UserResource($user),
+                'user_type' => 'guest'
+            ];
+        }
 
         $cv = new CvUser;
-        $cv->user_id = auth()->user()->id;
+        $cv->user_id = $user->id;
         $cv->template_id = $request->template_id;
         $cv->save();
 
@@ -64,11 +82,13 @@ class PersonalInfoController extends Controller
             $personal_info->image = $filename_with_ext;
         }
         $info = $cv->personalInfo()->save($personal_info);
-        
+ 
         $data = [
+            'auth_info' => $auth_info ?? null,
             'cv_id' => $cv->id,
             'personal_info' => new PersonalInfoResource($info),
         ];
+
         return successResponseJson($data, 'Your personal information saved in database');
     }
 
