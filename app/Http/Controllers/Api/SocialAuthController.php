@@ -67,7 +67,6 @@ class SocialAuthController extends Controller
 
     public function providerLogin($response, $provider)
     {
-        // return $response->name;
         $provider_id = $response->sub;
         $user = User::where([
             'provider_id' => $provider_id,

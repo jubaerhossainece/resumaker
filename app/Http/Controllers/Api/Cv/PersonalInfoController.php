@@ -26,7 +26,7 @@ class PersonalInfoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'image' => 'required|image',
+            'image' => 'nullable|image',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'profession' => 'required|string',

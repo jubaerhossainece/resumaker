@@ -9,19 +9,21 @@ use Illuminate\Support\Facades\Route;
 Route::get('/something', function(){
     return 'hello';
 });
-Route::get(
-    '/clear-cache',
-    function () {
 
-        Artisan::call('config:cache');
-        Artisan::call('cache:clear');
-        Artisan::call('optimize');
-        Artisan::call('view:clear');
-        Artisan::call('route:cache');
-        return '<h1>Cache facade value cleared</h1>';
-        // return vie')->with('<h1>Cache facade value cleared</h1>');
-    }
-);
+
+// Route::get(
+//     '/clear-cache',
+//     function () {
+
+//         Artisan::call('config:cache');
+//         Artisan::call('cache:clear');
+//         Artisan::call('optimize');
+//         Artisan::call('view:clear');
+//         Artisan::call('route:cache');
+//         return '<h1>Cache facade value cleared</h1>';
+//         // return vie')->with('<h1>Cache facade value cleared</h1>');
+//     }
+// );
 
 Route::get('/test', [TestController::class, 'test']);
 
@@ -38,9 +40,6 @@ require __DIR__ . '/auth.php';
 // Route::get('login/{provider}', [Api\SocialAuthController::class, 'redirectToProvider']);
 // Route::get('login/{provider}/callback', [Api\SocialAuthController::class, 'handleProviderCallback']);
 
-// Route::group(['middleware' => 'auth'], function () {
-// });
-
 Auth::routes();
 
 Route::get('verify-google-2fa', [\App\Http\Controllers\Auth\TwoFactorAuthController::class,'verify2faPage'])->name('verify2faPage');
@@ -53,4 +52,3 @@ Route::group(['middleware' => ['auth','2fa']],function(){
 
     Route::get('/2fa-status-change/{status}', [SettingController::class,'enableOrDisable2fa'])->name('google2faStatusChange');
 });
-

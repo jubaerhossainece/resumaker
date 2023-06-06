@@ -53,13 +53,8 @@ class User extends Authenticatable
         $this->attributes['password'] = bcrypt($value);
     }
     
-    public function projects()
+    public function cvs()
     {
-        return $this->hasMany(Project::class);
-    }
-
-    public function feedbacks()
-    {
-        return $this->hasManyThrough(ProjectLinkFeedback::class, Project::class);
+        return $this->hasMany(CvUser::class, 'user_id', 'id');
     }
 }

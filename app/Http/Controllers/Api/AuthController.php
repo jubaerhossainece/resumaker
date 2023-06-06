@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Models\CvUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -19,6 +20,7 @@ use Nette\Schema\ValidationException;
 use stdClass;
 use Illuminate\Support\Str;
 use App\Notifications\ResetPasswordNotification;
+use App\Services\GuestService;
 
 class AuthController extends Controller
 {
@@ -26,18 +28,14 @@ class AuthController extends Controller
     {
         DB::beginTransaction();
         try {
-            if($request->hasHeader('guest-id') && $request->header('guest-id')){
-                $user = User::where('guest_id', $request->header('guest-id'))->first();
-                if($user){
-                    $user->name = $request->name;
-                    $user->email = $request->email;
-                    $user->phone = $request->phone;
-                    $user->is_guest = false;
-                    $user->password = $request->password;
-                    $user->save();
-                }else{
-                    $user = User::create($request->validated());
-                }
+            $user = GuestService::getGuest($request);
+            if($user){
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->phone = $request->phone;
+                $user->is_guest = false;
+                $user->password = $request->password;
+                $user->save();
             }else{
                 $user = User::create($request->validated());
             }
@@ -55,12 +53,8 @@ class AuthController extends Controller
         // return successResponseJson(['user' => new UserResource($user)], 'Registration success');
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(Request $request)
     {
-        // return response()->json([
-        //     'data' => $user = User::where('email', $request->email)->first()
-        // ]);
-        
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -72,7 +66,16 @@ class AuthController extends Controller
                 throw \Illuminate\Validation\ValidationException::withMessages(['password' => 'Email & Password does not match.']);
             }
 
+            $guest = GuestService::getGuest($request);
             $user = User::where('email', $request->email)->first();
+            if($guest && $user->id != $guest->id){
+                CvUser::where(['user_id' => $guest->id])->update([
+                    'user_id' => $user->id
+                ]);
+
+                $guest->delete();
+            }
+
         } catch (Exception $error) {
             return errorResponseJson($error->getMessage(),422);
         }

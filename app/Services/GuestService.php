@@ -24,15 +24,13 @@ class GuestService
         return $user = User::where('guest_id', $guest_id)->first();
     }
 
-    public static function getGuest($guestID){
-        $user = auth()->user();
-        if(!$user){
-            $user = User::where('guest_id', $guestID)->firstOrFail();
-        }
-        return $user;
-    }
-    
+    public static function getGuest($request){
 
+        if($request->hasHeader('guest-id') && $request->header('guest-id')){
+            $guest = User::where('guest_id', $request->header('guest-id'))->first();
+        }
+        return $guest;
+    }
 }
 
 ?>
