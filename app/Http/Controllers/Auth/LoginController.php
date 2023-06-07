@@ -44,10 +44,16 @@ class LoginController extends Controller
 
 
     public function login(Request $request){
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+        
         try {
 
             if (!Auth::attempt($request->only(['email', 'password']))) {
-                throw \Illuminate\Validation\ValidationException::withMessages(['password' => 'Email & Password does not match.']);
+                // throw \Illuminate\Validation\ValidationException::withMessages(['password' => 'Email & Password does not match.']);
+                return redirect()->back()->withMessage('Email & Password does not match.');
             }
 
             $user = Admin::where('email', $request->email)->first();

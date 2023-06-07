@@ -1,15 +1,31 @@
 @extends('admin.layouts.auth')
-@section('page-title', 'Sign In to NPS')
-@section('form-title','Sign In to NPS')
+@section('page-title', 'Sign In page')
+@section('form-title','Sign In to Cv Maker Dashboard')
 @section('content')
+
+    @if(Session::has('message'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error!</strong> {{Session::get('message')}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+    @endif
+
     <form action="{{ route('login') }}" method="post" class="p-3">
         @csrf
         <div class="form-group mb-3">
-            <input class="form-control" name="email" type="email" required="" placeholder="Email">
+            <input class="form-control" name="email" type="email" value="{{old('email')}}" required="" placeholder="Email">
+            @error('email')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
 
         <div class="form-group mb-3">
-            <input class="form-control" name="password" type="password" required="" placeholder="Password">
+            <input class="form-control" name="password" type="password" value="{{old('password')}}" required="" placeholder="Password">
+            @error('password')
+                <span class="text-danger">{{ $message }}</span>
+            @endif
         </div>
 
         <div class="form-group mb-3">
