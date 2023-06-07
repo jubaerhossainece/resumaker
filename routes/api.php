@@ -36,7 +36,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('resume/personal-info', [Resume\PersonalInfoController::class, 'store']);
 
     Route::group(['middleware' => 'guestCheck'], function () {
-        
+        /*===========send pdf============*/
+        Route::post('/send-pdf/mail', [SendPdfController::class, 'sendToMail']);
         /*===============================*/
         /*=========== CV Apis ===========*/
         /*===============================*/
@@ -102,6 +103,11 @@ Route::group(['prefix' => 'v1'], function () {
         /*=========== Resume Apis ===========*/
         /*===============================*/
         Route::group(['prefix' => 'resume/{id}'], function(){
+
+            /*================ change template ===============*/
+            Route::post('/change-template', [Resume\TemplateController::class, 'change']);
+            Route::post('/replace', [Resume\TemplateController::class, 'replace']);
+
             /*=========== personal info api =================*/
             Route::get('personal-info', [Resume\PersonalInfoController::class, 'get']);
             Route::post('personal-info/{personal_info}', [Resume\PersonalInfoController::class, 'update']);

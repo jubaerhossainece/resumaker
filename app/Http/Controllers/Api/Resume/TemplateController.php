@@ -16,9 +16,9 @@ class TemplateController extends Controller
 
         $user = app('auth_user');
 
-        $cv = ResumeUser::where(['id' => $id, 'user_id' => $user->id])->first();
-        $cv->template_id = $request->template_id;
-        $cv->save();
+        $resume = ResumeUser::where(['id' => $id, 'user_id' => $user->id])->first();
+        $resume->template_id = $request->template_id;
+        $resume->save();
 
         return successResponseJson('Template changed');
     }
@@ -27,15 +27,15 @@ class TemplateController extends Controller
     public function replace($id)
     {
         $user = app('auth_user');
-        $cv = ResumeUser::with(['personalInfo', 'experiences', 'education', 'skills', 'technologies'])->where(['id' => $id, 'user_id' => $user->id])->firstOrFail();
+        $resume = ResumeUser::with(['personalInfo', 'experiences', 'education', 'skills', 'technologies'])->where(['id' => $id, 'user_id' => $user->id])->firstOrFail();
 
-        //delete cv
-        $cv->personalInfo()->delete();
-        $cv->experiences()->delete();
-        $cv->education()->delete();
-        $cv->skills()->delete();
-        $cv->technologies()->delete();
-        $cv->delete();
+        //delete resume
+        $resume->personalInfo()->delete();
+        $resume->experiences()->delete();
+        $resume->education()->delete();
+        $resume->skills()->delete();
+        $resume->technologies()->delete();
+        $resume->delete();
         
         return successResponseJson('Resume deleted from draft.');
     }
