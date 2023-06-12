@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\CvUser;
+use App\Models\ResumeUser;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
+use App\Services\GuestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -29,13 +31,15 @@ class SocialAuthController extends Controller
         $response = Http::withHeaders([
             'Authorization' => 'Bearer '.$token
         ])->get($providerUrl);
-        
 
-        if(isset(json_decode($response)->error)){
-            return errorResponseJson('An invalid token was sent',422);
-        }
+        // if(isset(json_decode($response)->error)){
+        //     return errorResponseJson('An invalid token was sent',422);
+        // }
 
-        return $this->providerLogin(json_decode($response), $provider);
+
+        $guest = GuestService::getGuest($request);
+
+        return $this->providerLogin(json_decode($response), $provider, $guest);
     }
 
     // /**
@@ -65,7 +69,7 @@ class SocialAuthController extends Controller
     // }
 
 
-    public function providerLogin($response, $provider)
+    public function providerLogin($response, $provider, $guest)
     {
         $provider_id = $response->sub;
         $user = User::where([
@@ -73,6 +77,23 @@ class SocialAuthController extends Controller
         ])->first();
 
         if($user){
+            if($guest && $user->id != $guest->id){
+                
+                //update user id of cv
+                CvUser::where(['user_id' => $guest->id])->update([
+                    'user_id' => $user->id
+                ]);
+
+                //update user id of resume
+                ResumeUser::where(['user_id' => $guest->id])->update([
+                    'user_id' => $user->id
+                ]);
+
+                $user->guest_id = $guest->guest_id;
+                $user->save();
+                $guest->delete();
+            }
+            
             return successResponseJson([
             'access_token' => $user->createToken('authToken')->plainTextToken,
             'token_type' => 'Bearer',
@@ -80,13 +101,24 @@ class SocialAuthController extends Controller
             'You are logged in.');
         }
 
-        $result = DB::table('users')->insert([
-            'provider_id' => $provider_id,
-            'name' => $response->name,
-            'email' => $response->email,
-            'image' => $response->picture,
-            'password' => Hash::make($provider_id)
-        ]);
+        //if already created a cv or resume without login, use the guest user to login or register
+        if($guest){
+            $guest->provider_id = $provider_id;
+            $guest->name = $response->name;
+            $guest->email = $response->email;
+            $guest->is_guest = false;
+            $guest->image = $response->picture;
+            $guest->password = Hash::make($provider_id);
+            $result = $guest->save();
+        }else{
+            $result = DB::table('users')->insert([
+                'provider_id' => $provider_id,
+                'name' => $response->name,
+                'email' => $response->email,
+                'image' => $response->picture,
+                'password' => Hash::make($provider_id)
+            ]);
+        }
 
         $user = User::where([
             'provider_id' => $provider_id,

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('v1/test', [TestController::class, 'test']);
+Route::post('v1/test', [TestController::class, 'test']);
 
 Route::group(['prefix' => 'v1'], function () {
     // login with socialite
