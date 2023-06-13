@@ -9,11 +9,19 @@ use App\Models\User;
 use App\Services\GuestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class TestController extends Controller
 {
     public function test(Request $request)
     {
+        $guest_id = bin2hex(random_bytes(15));
+        User::create([
+            'name' => 'guest',
+            'guest_id' => $guest_id,
+            'password' => Hash::make('123456')
+        ]);
+        return successResponseJson('Created new user');
         $user = User::where('email', $request->email)->first();
         $guest = GuestService::getGuest($request);
         // return response([

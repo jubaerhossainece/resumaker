@@ -68,7 +68,7 @@ class AuthController extends Controller
             }
 
             $guest = GuestService::getGuest($request);
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->firstOrFail();
 
             if ($guest && $user->id != $guest->id) {
 
@@ -82,7 +82,6 @@ class AuthController extends Controller
                     'user_id' => $user->id
                 ]);
 
-                $user->guest_id = $guest->guest_id;
                 $user->save();
                 $guest->delete();
             }

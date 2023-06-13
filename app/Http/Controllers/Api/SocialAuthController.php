@@ -89,7 +89,6 @@ class SocialAuthController extends Controller
                     'user_id' => $user->id
                 ]);
 
-                $user->guest_id = $guest->guest_id;
                 $user->save();
                 $guest->delete();
             }
