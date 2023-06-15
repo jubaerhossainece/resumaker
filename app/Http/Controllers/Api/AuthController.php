@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\CvUser;
+use App\Models\ResumeUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -29,21 +30,21 @@ class AuthController extends Controller
         DB::beginTransaction();
         try {
             $user = GuestService::getGuest($request);
-            if($user){
+            if ($user) {
                 $user->name = $request->name;
                 $user->email = $request->email;
                 $user->phone = $request->phone;
                 $user->is_guest = false;
                 $user->password = $request->password;
                 $user->save();
-            }else{
+            } else {
                 $user = User::create($request->validated());
             }
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
 
-            return errorResponseJson($exception->getMessage(),500);
+            return errorResponseJson($exception->getMessage(), 500);
         }
         return successResponseJson([
             'access_token' => $user->createToken('authToken')->plainTextToken,
@@ -67,17 +68,25 @@ class AuthController extends Controller
             }
 
             $guest = GuestService::getGuest($request);
-            $user = User::where('email', $request->email)->first();
-            if($guest && $user->id != $guest->id){
+            $user = User::where('email', $request->email)->firstOrFail();
+
+            if ($guest && $user->id != $guest->id) {
+
+                //update user id of cv
                 CvUser::where(['user_id' => $guest->id])->update([
                     'user_id' => $user->id
                 ]);
 
+                //update user id of resume
+                ResumeUser::where(['user_id' => $guest->id])->update([
+                    'user_id' => $user->id
+                ]);
+
+                $user->save();
                 $guest->delete();
             }
-
         } catch (Exception $error) {
-            return errorResponseJson($error->getMessage(),422);
+            return errorResponseJson($error->getMessage(), 422);
         }
 
         return successResponseJson([
@@ -199,7 +208,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|exists:users',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -231,7 +240,7 @@ class AuthController extends Controller
     {
         $user = User::where('email', $email)->select('name', 'email')->first();
 
-        $url = config('custom.frontend_app_url').'reset-code/'.$token;
+        $url = config('custom.frontend_app_url') . 'reset-code/' . $token;
         try {
             $user->notify(new ResetPasswordNotification($url));
             return true;

@@ -44,7 +44,7 @@ class PersonalInfoController extends Controller
         //find the user using ip address and device id or create one
         $user = auth('sanctum')->user();
         if(!$user){
-            $guest_id = md5($request->userAgent().$request->ip());
+            $guest_id = bin2hex(random_bytes(15));
 
             if($request->hasHeader('guest-id') && $request->header('guest-id')){
                 $user = User::where('guest_id', $request->header('guest-id'))->first();
