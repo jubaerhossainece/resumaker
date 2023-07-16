@@ -22,7 +22,7 @@ class GuestMiddleware
             if($request->hasHeader('guest-id') && $request->header('guest-id')){
                 $user = User::where('guest_id', $request->header('guest-id'))->firstOrFail();
             }else{
-                return errorResponseJson('No data found', 422);
+                return errorResponseJson('Not authenticated', 422);
             }
         }
 

@@ -37,4 +37,17 @@ class TestController extends Controller
         ]);
 
     }
+
+    function cvTest($id) {
+        return $id;
+        $cv = CvUser::with('experiences', 'education', 'certifications', 'awards', 'publications', 'references', 'skills', 'technologies')->where('id', $id)->first();
+        unset($cv->created_at,$cv->updated_at);
+        
+        if($cv){
+            return successResponseJson($cv);
+        }else{
+            return errorResponseJson('No cv found', 422);
+        }
+        
+    }
 }

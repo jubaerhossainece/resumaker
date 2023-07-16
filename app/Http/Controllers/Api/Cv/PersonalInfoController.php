@@ -17,9 +17,13 @@ class PersonalInfoController extends Controller
     public function get($id)
     {
         $user = app('auth_user');
-        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
+        $cv = CvUser::with('personalInfo')->where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
-        return successResponseJson(new PersonalInfoResource($cv->personalInfo));
+        if($cv){
+            return successResponseJson(new PersonalInfoResource($cv->personalInfo));
+        }else{
+            return errorResponseJson('No cv found', 422);
+        }
     }
 
 
