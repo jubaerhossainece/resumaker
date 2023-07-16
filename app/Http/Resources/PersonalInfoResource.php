@@ -15,10 +15,6 @@ class PersonalInfoResource extends JsonResource
      */
     public function toArray($request)
     {
-        if(is_null($this->resource)){
-            return [];
-        }
-
         $url = $request->getSchemeAndHttpHost();
         if($this->personal_infoable_type == 'App\Models\CvUser'){
             $path = 'public/cv/userImage';

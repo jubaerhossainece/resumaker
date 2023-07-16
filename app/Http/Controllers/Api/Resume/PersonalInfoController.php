@@ -18,9 +18,13 @@ class PersonalInfoController extends Controller
     public function get($id)
     {
         $user = app('auth_user');
-        $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->with('personalInfo')->firstOrFail();
-
-        return successResponseJson(new PersonalInfoResource($resume->personalInfo));
+        $resume = ResumeUser::with('personalInfo')->where(['id' => $id,'user_id' => $user->id])->firstOrFail();
+        
+        if($resume){
+            return successResponseJson(new PersonalInfoResource($resume->personalInfo));
+        }else{
+            return errorResponseJson('No resume found', 422);
+        }
     }
 
 

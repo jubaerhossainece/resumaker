@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('v1/test', [TestController::class, 'test']);
+// Route::post('v1/test', [TestController::class, 'test']);
+// Route::get('v1/cv-test/{id}', [TestController::class, 'cvTest']);
+// Route::get('/detail', [CvController::class, 'show']);
 
 Route::group(['prefix' => 'v1'], function () {
     // login with socialite
@@ -41,9 +43,8 @@ Route::group(['prefix' => 'v1'], function () {
         /*===============================*/
         /*=========== CV Apis ===========*/
         /*===============================*/
-        Route::group(['prefix' => 'cv/{id}'], function(){
-
-            Route::get('/', [CvController::class, 'show']);
+            Route::group(['prefix' => 'cv/{id}'], function(){
+                Route::get('/detail', [CvController::class, 'show']);
 
             /*================ change template ===============*/
             Route::post('/change-template', [Cv\TemplateController::class, 'change']);
@@ -103,7 +104,7 @@ Route::group(['prefix' => 'v1'], function () {
         /*=========== Resume Apis ===========*/
         /*===============================*/
         Route::group(['prefix' => 'resume/{id}'], function(){
-
+            Route::get('/detail', [ResumeController::class, 'show']);
             /*================ change template ===============*/
             Route::post('/change-template', [Resume\TemplateController::class, 'change']);
             Route::post('/replace', [Resume\TemplateController::class, 'replace']);
