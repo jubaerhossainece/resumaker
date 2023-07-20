@@ -43,15 +43,14 @@ class AuthController extends Controller
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
-
             return errorResponseJson($exception->getMessage(), 500);
         }
+
         return successResponseJson([
             'access_token' => $user->createToken('authToken')->plainTextToken,
             'token_type' => 'Bearer',
             'user' => new UserResource($user)
         ], 'Registration Successful');
-        // return successResponseJson(['user' => new UserResource($user)], 'Registration success');
     }
 
     public function login(Request $request)
