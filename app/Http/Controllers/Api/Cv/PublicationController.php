@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PublicationResource;
 use App\Models\CvUser;
 use App\Models\Publication;
+use App\Rules\ValidUrl;
 use Illuminate\Http\Request;
 
 class PublicationController extends Controller
@@ -25,7 +26,7 @@ class PublicationController extends Controller
             'publication_title' => 'required|string',
             'publisher' => 'required|string',
             'published_in' => 'sometimes|string',
-            'publication_url' => 'required|url',
+            'publication_url' => ['required', new ValidUrl],
             'publication_date' => 'required|date',
             'description' => 'required|string',
         ]);

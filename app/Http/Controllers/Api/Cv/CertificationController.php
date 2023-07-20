@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CertificationResource;
 use App\Models\Certification;
 use App\Models\CvUser;
+use App\Rules\ValidUrl;
 use Illuminate\Http\Request;
 
 class CertificationController extends Controller
@@ -23,7 +24,7 @@ class CertificationController extends Controller
         $request->validate([
             'name' => 'required|string',
             'issuing_org' => 'required|string',
-            'credential_url' => 'required|string',
+            'credential_url' => ['required', new ValidUrl],
             'issue_date' => 'required|date',
             'exp_date' => 'nullable|date',
             'is_no_exp' => 'required|boolean',
