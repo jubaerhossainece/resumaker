@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\PersonalInfo;
 use App\Models\ResumeUser;
 use App\Models\User;
+use App\Rules\PhoneNumber;
 use App\Services\GuestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -36,7 +37,7 @@ class PersonalInfoController extends Controller
             'last_name' => 'required|string',
             'profession' => 'required|string',
             'email' => 'required|email|',
-            'phone' => 'required|string',
+            'phone' => ['required', new PhoneNumber()],
             'city' => 'required|string',
             'country' => 'required|string',
             'post_code' => 'required|string',

@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\CvUser;
 use App\Models\PersonalInfo;
 use App\Models\User;
+use App\Rules\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Services\GuestService;
@@ -35,7 +36,7 @@ class PersonalInfoController extends Controller
             'last_name' => 'required|string',
             'profession' => 'required|string',
             'email' => 'required|email|',
-            'phone' => 'required|string',
+            'phone' => ['required', new PhoneNumber()],
             'city' => 'required|string',
             'country' => 'required|string',
             'post_code' => 'required|string',
@@ -44,7 +45,7 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
-        
+        return 'hello';
         //find the user using ip address and device id or create one
         $user = auth('sanctum')->user();
         if(!$user){
