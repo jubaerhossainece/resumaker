@@ -53,7 +53,7 @@ class PublicationController extends Controller
             'publication_title' => 'required|string',
             'publisher' => 'required|string',
             'published_in' => 'sometimes|string',
-            'publication_url' => 'required|url',
+            'publication_url' => ['required', new ValidUrl],
             'publication_date' => 'required|date',
             'description' => 'required|string',
         ]);

@@ -45,7 +45,6 @@ class PersonalInfoController extends Controller
             'template_id' => 'required',
         ]);
 
-        return 'hello';
         //find the user using ip address and device id or create one
         $user = auth('sanctum')->user();
         if(!$user){

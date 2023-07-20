@@ -51,7 +51,7 @@ class CertificationController extends Controller
         $request->validate([
             'name' => 'required|string',
             'issuing_org' => 'required|string',
-            'credential_url' => 'required|string',
+            'credential_url' => ['required', new ValidUrl],
             'issue_date' => 'required|date',
             'exp_date' => 'nullable|date',
             'is_no_exp' => 'required|boolean',

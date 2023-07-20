@@ -108,7 +108,7 @@ class PersonalInfoController extends Controller
             'last_name' => 'required|string',
             'profession' => 'required|string',
             'email' => 'required|email|',
-            'phone' => 'required|string',
+            'phone' => ['required', new PhoneNumber()],
             'city' => 'required|string',
             'country' => 'required|string',
             'post_code' => 'required|string',
