@@ -25,7 +25,7 @@ class PublicationController extends Controller
         $request->validate([
             'publication_title' => 'required|string',
             'publisher' => 'required|string',
-            'published_in' => 'sometimes|string',
+            'published_in' => 'nullable|string',
             'publication_url' => ['required', new ValidUrl],
             'publication_date' => 'required|date',
             'description' => 'required|string',
@@ -52,7 +52,7 @@ class PublicationController extends Controller
         $request->validate([
             'publication_title' => 'required|string',
             'publisher' => 'required|string',
-            'published_in' => 'sometimes|string',
+            'published_in' => 'nullable|string',
             'publication_url' => ['required', new ValidUrl],
             'publication_date' => 'required|date',
             'description' => 'required|string',
