@@ -27,7 +27,7 @@ class GuestService
     public static function getGuest($request){
 
         if($request->hasHeader('guest-id') && $request->header('guest-id')){
-            return $guest = User::where('guest_id', $request->header('guest-id'))->first();
+            return User::where('guest_id', $request->header('guest-id'))->first();
         }
         return null;
     }
