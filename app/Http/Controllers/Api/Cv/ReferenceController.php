@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ReferenceResource;
 use App\Models\CvUser;
 use App\Models\Reference;
+use App\Rules\PhoneNumber;
 use Illuminate\Http\Request;
 
 class ReferenceController extends Controller
@@ -24,7 +25,7 @@ class ReferenceController extends Controller
             'name' => 'required|string',
             'current_organization' => 'required|string',
             'designation' => 'sometimes|string',
-            'phone' => 'required|alpha_num',
+            'phone' => ['required', new PhoneNumber()],
             'email' => 'required|email',
         ]);
         
@@ -49,7 +50,7 @@ class ReferenceController extends Controller
             'name' => 'required|string',
             'current_organization' => 'required|string',
             'designation' => 'sometimes|string',
-            'phone' => 'required|alpha_num',
+            'phone' => ['required', new PhoneNumber()],
             'email' => 'required|email',
         ]);
         
