@@ -9,9 +9,10 @@ use Illuminate\Http\Request;
 
 class CvController extends Controller
 {
-    public function show($id)
+    public function show()
     {
-        $cv = CvUser::with('personalInfo', 'experiences', 'education', 'certifications', 'awards', 'publications', 'references', 'skills', 'technologies')->where('id', $id)->first();
+        $user = app('auth_user');
+        $cv = CvUser::with('personalInfo', 'experiences', 'education', 'certifications', 'awards', 'publications', 'references', 'skills', 'technologies')->where('user_id', $user->id)->latest()->first();
         
         if($cv){
             return successResponseJson(new CvResource($cv));

@@ -9,9 +9,11 @@ use Illuminate\Http\Request;
 
 class ResumeController extends Controller
 {
-    public function show($id)
+    public function show()
     {
-        $resume = ResumeUser::with('personalInfo', 'experiences', 'education', 'skills', 'technologies')->where('id', $id)->first();
+        $user = app('auth_user');
+
+        $resume = ResumeUser::with('personalInfo', 'experiences', 'education', 'skills', 'technologies')->where('user_id', $user->id)->latest()->first();
         
         if($resume){
             return successResponseJson(new ResumeResource($resume));

@@ -40,11 +40,12 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => 'guestCheck'], function () {
         /*===========send pdf============*/
         Route::post('/send-pdf/mail', [SendPdfController::class, 'sendToMail']);
+        
         /*===============================*/
         /*=========== CV Apis ===========*/
         /*===============================*/
+            Route::get('/cv-detail', [CvController::class, 'show']);
             Route::group(['prefix' => 'cv/{id}'], function(){
-                Route::get('/detail', [CvController::class, 'show']);
 
             /*================ change template ===============*/
             Route::post('/change-template', [Cv\TemplateController::class, 'change']);
@@ -103,8 +104,9 @@ Route::group(['prefix' => 'v1'], function () {
         /*===============================*/
         /*=========== Resume Apis ===========*/
         /*===============================*/
-        Route::group(['prefix' => 'resume/{id}'], function(){
-            Route::get('/detail', [ResumeController::class, 'show']);
+            Route::get('/resume-detail', [ResumeController::class, 'show']);
+
+            Route::group(['prefix' => 'resume/{id}'], function(){
             /*================ change template ===============*/
             Route::post('/change-template', [Resume\TemplateController::class, 'change']);
             Route::post('/replace', [Resume\TemplateController::class, 'replace']);
