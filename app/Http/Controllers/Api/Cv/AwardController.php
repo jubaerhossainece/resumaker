@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class AwardController extends Controller
 {
-    public function get(Request $request, $id)
+    public function get($id)
     {
         $user = app('auth_user');
         

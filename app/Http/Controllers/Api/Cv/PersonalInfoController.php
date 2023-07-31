@@ -12,7 +12,8 @@ use App\Rules\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Services\GuestService;
-// 055a6a8241ed1039006bf9bd679f32f3
+use Illuminate\Support\Str;
+
 class PersonalInfoController extends Controller
 {
     public function get($id)
@@ -85,7 +86,7 @@ class PersonalInfoController extends Controller
             $path = 'public/cv/userImage';
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
-            $filename_with_ext = time() . '.' . $extension;
+            $filename_with_ext = Str::random(20).time() . '.' . $extension;
             $request->file('image')->storeAs($path, $filename_with_ext);
             $personal_info->image = $filename_with_ext;
         }
@@ -138,9 +139,13 @@ class PersonalInfoController extends Controller
             $path = 'public/cv/userImage';
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
-            $filename_with_ext = time() . '.' . $extension;
-            if (isset($cv->personal_info->image)) {
-                Storage::delete($path.'/'.$cv->personal_info->image);
+            $filename_with_ext = Str::random(20).time() . '.' . $extension;
+
+            // delete previous image
+            if (isset($personal_info->image)) {
+                if(Storage::exists($path .'/'. $personal_info->image)){
+                    Storage::delete($path.'/'.$personal_info->image);
+                }
             }
             $request->file('image')->storeAs($path, $filename_with_ext);
             $personal_info->image = $filename_with_ext;

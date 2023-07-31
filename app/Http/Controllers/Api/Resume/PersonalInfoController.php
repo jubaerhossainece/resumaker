@@ -12,7 +12,7 @@ use App\Rules\PhoneNumber;
 use App\Services\GuestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use stdClass;
+use Illuminate\Support\Str;
 
 class PersonalInfoController extends Controller
 {
@@ -85,7 +85,7 @@ class PersonalInfoController extends Controller
             $path = 'public/resume/userImage';
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
-            $filename_with_ext = time() . '.' . $extension;
+            $filename_with_ext = Str::random(20).time() . '.' . $extension;
             $request->file('image')->storeAs($path, $filename_with_ext);
             $personal_info->image = $filename_with_ext;
         }
@@ -137,9 +137,13 @@ class PersonalInfoController extends Controller
             $path = 'public/resume/userImage';
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
-            $filename_with_ext = time() . '.' . $extension;
-            if (isset($resume->personal_info->image)) {
-                Storage::delete($path.'/'.$resume->personal_info->image);
+            $filename_with_ext = Str::random(20).time() . '.' . $extension;
+            
+            // delete previous image
+            if (isset($personal_info->image)) {
+                if(Storage::exists($path .'/'. $personal_info->image)){
+                    Storage::delete($path.'/'.$personal_info->image);
+                }
             }
             $request->file('image')->storeAs($path, $filename_with_ext);
             $personal_info->image = $filename_with_ext;
