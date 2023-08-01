@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('v1/cv-test/{id}', [TestController::class, 'cvTest']);
 // Route::get('/detail', [CvController::class, 'show']);
 
-Route::group(['prefix' => 'v1'], function () {
+Route::group(['prefix' => 'v1', 'middleware' => 'corsCheck'], function () {
     // login with socialite
     Route::post('login/{provider}', [SocialAuthController::class, 'redirectToProvider']);
     Route::get('login/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);

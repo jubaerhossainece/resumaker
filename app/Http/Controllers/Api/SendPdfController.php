@@ -14,14 +14,11 @@ class SendPdfController extends Controller
     {
         $user = auth('sanctum')->user();
         $data['email'] = $user->email;
-        // $pdfContent = $request->file('pdf');
-
-        // return $pdffile = base64_encode($request->file('pdf'));
-        // $pdfContent = base64_decode($pdffile);
+        
         $pdfContent = base64_decode($request->pdf);
         $filename = Str::random(10).time().'.'.'pdf';
-        $storagePath = storage_path('app/public/pdf/') . $filename;
-        file_put_contents($storagePath, $pdfContent); 
+        $storagePath = storage_path('pdf/') . $filename;
+        file_put_contents($storagePath, $pdfContent);
         // $pdfPath = $request->file('pdf')->storeAs('pdf', $filename);
 
         
