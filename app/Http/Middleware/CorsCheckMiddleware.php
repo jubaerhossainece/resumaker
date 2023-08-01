@@ -22,7 +22,8 @@ class CorsCheckMiddleware
             ]);   
         }elseif(config('app.env') == 'production'){
             $allowedOrigins = [
-                'https://mycvgenerator.com'
+                'https://mycvgenerator.com',
+                'https://mycvgenerator.com/*',
             ];
             
             $origin = $_SERVER['HTTP_ORIGIN'];
