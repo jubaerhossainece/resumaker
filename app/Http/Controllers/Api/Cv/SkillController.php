@@ -24,7 +24,7 @@ class SkillController extends Controller
     {
         $request->validate([
             'skill' => 'required|array',
-            'technology' => 'nullable|array'
+            'technology' => 'required|array'
         ]);
         
         $user = app('auth_user');

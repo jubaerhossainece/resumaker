@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cv\CertificationRequest;
 use App\Http\Resources\CertificationResource;
 use App\Models\Certification;
 use App\Models\CvUser;
@@ -19,16 +20,9 @@ class CertificationController extends Controller
     }
 
 
-    public function save(Request $request, $id)
+    public function save(CertificationRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'issuing_org' => 'required|string',
-            'credential_url' => ['required', new ValidUrl],
-            'issue_date' => 'required|date',
-            'exp_date' => 'nullable|date',
-            'is_no_exp' => 'required|boolean',
-        ]);
+        $request->validated();
         
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
@@ -46,16 +40,9 @@ class CertificationController extends Controller
     }
 
 
-    public function update(Request $request, $id, $cert_id)
+    public function update(CertificationRequest $request, $id, $cert_id)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'issuing_org' => 'required|string',
-            'credential_url' => ['required', new ValidUrl],
-            'issue_date' => 'required|date',
-            'exp_date' => 'nullable|date',
-            'is_no_exp' => 'required|boolean',
-        ]);
+        $request->validated();
 
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();

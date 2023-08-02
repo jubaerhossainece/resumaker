@@ -23,12 +23,12 @@ class EducationController extends Controller
     public function save(Request $request, $id)
     {
         $request->validate([
-            'study_field' => 'required|string',
-            'degree' => 'required|string',
-            'institution_name' => 'required|string',
-            'result' => 'required|numeric',
-            'city' => 'required|string',
-            'country' => 'required|string',
+            'study_field' => 'required|string|max:50',
+            'degree' => 'required|string|max:50',
+            'institution_name' => 'required|string|max:50',
+            'result' => 'numeric|max:20',
+            'city' => 'string|max:50',
+            'country' => 'string|max:50',
             'grad_date' => 'nullable|date',
             'is_current' => 'required|boolean',
         ]);
@@ -53,12 +53,12 @@ class EducationController extends Controller
     public function update(Request $request, $id, $edu_id)
     {
         $request->validate([
-            'study_field' => 'required|string',
-            'degree' => 'required|string',
-            'institution_name' => 'required|string',
-            'result' => 'required|numeric',
-            'city' => 'required|string',
-            'country' => 'required|string',
+            'study_field' => 'required|string|max:50',
+            'degree' => 'required|string|max:50',
+            'institution_name' => 'required|string|max:50',
+            'result' => 'numeric|max:20',
+            'city' => 'string|max:50',
+            'country' => 'string|max:50',
             'grad_date' => 'nullable|date',
             'is_current' => 'required|boolean',
         ]);

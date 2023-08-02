@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cv\PublicationRequest;
 use App\Http\Resources\PublicationResource;
 use App\Models\CvUser;
 use App\Models\Publication;
-use App\Rules\ValidUrl;
 use Illuminate\Http\Request;
 
 class PublicationController extends Controller
@@ -20,17 +20,8 @@ class PublicationController extends Controller
     }
 
 
-    public function save(Request $request, $id)
+    public function save(PublicationRequest $request, $id)
     {
-        $request->validate([
-            'publication_title' => 'required|string',
-            'publisher' => 'required|string',
-            'published_in' => 'nullable|string',
-            'publication_url' => ['required', new ValidUrl],
-            'publication_date' => 'required|date',
-            'description' => 'required|string',
-        ]);
-        
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
@@ -47,17 +38,8 @@ class PublicationController extends Controller
     }
 
 
-    public function update(Request $request, $id, $pub_id)
+    public function update(PublicationRequest $request, $id, $pub_id)
     {
-        $request->validate([
-            'publication_title' => 'required|string',
-            'publisher' => 'required|string',
-            'published_in' => 'nullable|string',
-            'publication_url' => ['required', new ValidUrl],
-            'publication_date' => 'required|date',
-            'description' => 'required|string',
-        ]);
-        
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 

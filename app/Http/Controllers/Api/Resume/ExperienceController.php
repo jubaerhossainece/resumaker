@@ -24,13 +24,13 @@ class ExperienceController extends Controller
     public function save(Request $request, $id)
     {
         $request->validate([
-            'organization' => 'required|string',
-            'job_title' => 'required|string',
-            'responsibilities_achievements' => 'required|string',
+            'organization' => 'required|string|max:36',
+            'job_title' => 'required|string|max:60',
+            'responsibilities_achievements' => 'required|string|max:700',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
-            'city' => 'required|string',
-            'country' => 'required|string',
+            'city' => 'string',
+            'country' => 'string',
         ]);
         
         $user = app('auth_user');
@@ -53,13 +53,13 @@ class ExperienceController extends Controller
     public function update(Request $request, $id, $exp_id)
     {
         $request->validate([
-            'organization' => 'required|string',
-            'job_title' => 'required|string',
-            'responsibilities_achievements' => 'required|string',
+            'organization' => 'required|string|max:36',
+            'job_title' => 'required|string|max:60',
+            'responsibilities_achievements' => 'required|string|max:700',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
-            'city' => 'required|string',
-            'country' => 'required|string',
+            'city' => 'string',
+            'country' => 'string',
         ]);
 
         $user = app('auth_user');

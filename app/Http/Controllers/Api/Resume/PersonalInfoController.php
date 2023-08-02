@@ -33,15 +33,15 @@ class PersonalInfoController extends Controller
     {
         $request->validate([
             'image' => 'nullable|image',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'profession' => 'required|string',
-            'email' => 'required|email|',
-            'phone' => ['required', new PhoneNumber()],
-            'city' => 'required|string',
-            'country' => 'required|string',
-            'post_code' => 'required|string',
-            'about' => 'required|string',
+            'first_name' => 'required|string|max:15',
+            'last_name' => 'required|string|max:15',
+            'profession' => 'required|string|max:60',
+            'email' => 'required|email|max:40',
+            'phone' => [new PhoneNumber(),'max:20'],
+            'city' => 'string|max:60',
+            'country' => 'string|max:60',
+            'post_code' => 'required|string|max:15',
+            'about' => 'required|string|max:500',
             'social_links' => 'required',
             'template_id' => 'required',
         ]);
@@ -103,16 +103,16 @@ class PersonalInfoController extends Controller
     public function update(Request $request, $id, $info_id)
     {
         $request->validate([
-            'image' => 'image',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'profession' => 'required|string',
-            'email' => 'required|email|',
-            'phone' => ['required', new PhoneNumber()],
-            'city' => 'required|string',
-            'country' => 'required|string',
-            'post_code' => 'required|string',
-            'about' => 'required|string',
+            'image' => 'nullable|image',
+            'first_name' => 'required|string|max:15',
+            'last_name' => 'required|string|max:15',
+            'profession' => 'required|string|max:60',
+            'email' => 'required|email|max:40',
+            'phone' => [new PhoneNumber(),'max:20'],
+            'city' => 'string|max:60',
+            'country' => 'string|max:60',
+            'post_code' => 'required|string|max:15',
+            'about' => 'required|string|max:500',
             'social_links' => 'required',
         ]);
 

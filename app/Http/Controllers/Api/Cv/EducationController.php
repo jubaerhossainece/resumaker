@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cv\EducationRequest;
 use App\Http\Resources\EducationResource;
 use App\Models\CvUser;
 use App\Models\Education;
@@ -19,18 +20,9 @@ class EducationController extends Controller
     }
 
 
-    public function save(Request $request, $id)
+    public function save(EducationRequest $request, $id)
     {
-        $request->validate([
-            'study_field' => 'required|string',
-            'degree' => 'required|string',
-            'institution_name' => 'required|string',
-            'result' => 'required|numeric',
-            'city' => 'required|string',
-            'country' => 'required|string',
-            'grad_date' => 'nullable|date',
-            'is_current' => 'required|boolean',
-        ]);
+        $request->validated();
         
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id, 'user_id' => $user->id])->firstOrFail();
@@ -49,18 +41,9 @@ class EducationController extends Controller
         return successResponseJson(new EducationResource($data), 'Your education information saved in database');
     }
 
-    public function update(Request $request, $id, $edu_id)
+    public function update(EducationRequest $request, $id, $edu_id)
     {
-        $request->validate([
-            'study_field' => 'required|string',
-            'degree' => 'required|string',
-            'institution_name' => 'required|string',
-            'result' => 'required|numeric',
-            'city' => 'required|string',
-            'country' => 'required|string',
-            'grad_date' => 'nullable|date',
-            'is_current' => 'required|boolean',
-        ]);
+        $request->validated();
 
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();

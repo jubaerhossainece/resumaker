@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cv\AwardRequest;
 use App\Http\Resources\AwardResource;
 use App\Models\Award;
 use App\Models\CvUser;
@@ -21,14 +22,9 @@ class AwardController extends Controller
     }
 
 
-    public function save(Request $request, $id)
+    public function save(AwardRequest $request, $id)
     {
-        $request->validate([
-            'award_name' => 'required|string',
-            'award_details' => 'required|string',
-            'awarded_by' => 'required|string',
-            'awarded_date' => 'required|date',
-        ]);
+        $request->validated();
 
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
@@ -44,14 +40,9 @@ class AwardController extends Controller
     }
 
 
-    public function update(Request $request, $id, $award_id)
+    public function update(AwardRequest $request, $id, $award_id)
     {
-        $request->validate([
-            'award_name' => 'required|string',
-            'award_details' => 'required|string',
-            'awarded_by' => 'required|string',
-            'awarded_date' => 'required|date',
-        ]);
+        $request->validated();
         
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();

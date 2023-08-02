@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cv\ReferenceRequest;
 use App\Http\Resources\ReferenceResource;
 use App\Models\CvUser;
 use App\Models\Reference;
-use App\Rules\PhoneNumber;
 use Illuminate\Http\Request;
 
 class ReferenceController extends Controller
@@ -19,16 +19,8 @@ class ReferenceController extends Controller
     }
 
 
-    public function save(Request $request, $id)
+    public function save(ReferenceRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'current_organization' => 'required|string',
-            'designation' => 'sometimes|string',
-            'phone' => ['required', new PhoneNumber()],
-            'email' => 'required|email',
-        ]);
-        
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
@@ -44,16 +36,8 @@ class ReferenceController extends Controller
     }
 
 
-    public function update(Request $request, $id, $ref_id)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'current_organization' => 'required|string',
-            'designation' => 'sometimes|string',
-            'phone' => ['required', new PhoneNumber()],
-            'email' => 'required|email',
-        ]);
-        
+    public function update(ReferenceRequest $request, $id, $ref_id)
+    {   
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 

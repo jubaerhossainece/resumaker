@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cv\PersonalInfoRequest;
 use App\Http\Resources\PersonalInfoResource;
-use App\Http\Resources\UserResource;
 use App\Models\CvUser;
 use App\Models\PersonalInfo;
 use App\Models\User;
-use App\Rules\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Services\GuestService;
@@ -29,24 +28,12 @@ class PersonalInfoController extends Controller
     }
 
 
-    public function store(Request $request)
-    {   
+    public function store(PersonalInfoRequest $request)
+    {
         $request->validate([
-            'image' => 'nullable|image',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'profession' => 'required|string',
-            'email' => 'required|email|',
-            'phone' => ['required', new PhoneNumber()],
-            'city' => 'required|string',
-            'country' => 'required|string',
-            'post_code' => 'required|string',
-            'about' => 'required|string',
-            'social_links' => 'required',
             'template_id' => 'required',
         ]);
 
-        //find the user using ip address and device id or create one
         $user = auth('sanctum')->user();
         if(!$user){
             $guest_id = bin2hex(random_bytes(15));
@@ -102,22 +89,8 @@ class PersonalInfoController extends Controller
     }
 
 
-    public function update(Request $request, $id, $info_id)
+    public function update(PersonalInfoRequest $request, $id, $info_id)
     {
-        $request->validate([
-            'image' => 'image',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'profession' => 'required|string',
-            'email' => 'required|email|',
-            'phone' => 'required|string',
-            'city' => 'required|string',
-            'country' => 'required|string',
-            'post_code' => 'required|string',
-            'about' => 'required|string',
-            'social_links' => 'required',
-        ]);
-
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
