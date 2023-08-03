@@ -4,16 +4,18 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class PhoneNumber implements Rule
+class MaxArrayLength implements Rule
 {
+    private $length;
+    private $attribute;
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($length)
     {
-        //
+        $this->length = $length;
     }
 
     /**
@@ -25,7 +27,8 @@ class PhoneNumber implements Rule
      */
     public function passes($attribute, $value)
     {
-        return preg_match('/^[\d+() -]+$/', $value);
+        $this->attribute = $attribute;
+        return count($value) <= $this->length ? true : false;
     }
 
     /**
@@ -35,6 +38,6 @@ class PhoneNumber implements Rule
      */
     public function message()
     {
-        return "The :attribute may only contain digits, '+', '-', '(', and ')' characters.";
+        return "The $this->attribute length can not be greater than $this->length.";
     }
 }

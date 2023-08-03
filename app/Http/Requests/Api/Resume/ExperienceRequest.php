@@ -13,7 +13,7 @@ class ExperienceRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,13 @@ class ExperienceRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'organization' => 'required|string|max:36',
+            'job_title' => 'required|string|max:60',
+            'responsibilities_achievements' => 'required|string|max:700',
+            'start_date' => 'required|date_format:Y-m-d',
+            'end_date' => 'nullable|date_format:Y-m-d',
+            'city' => 'nullable|string',
+            'country' => 'nullable|string',
         ];
     }
 }

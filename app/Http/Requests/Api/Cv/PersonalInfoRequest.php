@@ -2,11 +2,21 @@
 
 namespace App\Http\Requests\Api\Cv;
 
+use App\Rules\MaxArrayLength;
 use App\Rules\PhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PersonalInfoRequest extends FormRequest
 {
+    public function prepareForValidation() {
+        $social_links = json_decode($this->input('social_links'), true);
+        $this->merge([
+            'social_links' => $social_links
+        ]);
+
+    }
+
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -33,9 +43,16 @@ class PersonalInfoRequest extends FormRequest
             'phone' => ['nullable', new PhoneNumber(), 'max:20'],
             'city' => 'nullable|string||max:60',
             'country' => 'nullable|string||max:60',
-            'post_code' => 'required|string|max:15',
+            'post_code' => 'nullable|string|max:15',
             'about' => 'required|string|max:700',
-            'social_links' => 'required',
+            'social_links' => ['nullable','max_array_length:5']
+        ];
+    }
+
+
+    public function messages(){
+        return [
+            'social_links.max_array_length' => 'You can not add more than 5 social links'
         ];
     }
 }

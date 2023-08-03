@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Resume;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Resume\EducationRequest;
 use App\Http\Resources\EducationResource;
 use App\Models\Education;
 use App\Models\ResumeUser;
@@ -20,19 +21,8 @@ class EducationController extends Controller
     }
 
 
-    public function save(Request $request, $id)
-    {
-        $request->validate([
-            'study_field' => 'required|string|max:50',
-            'degree' => 'required|string|max:50',
-            'institution_name' => 'required|string|max:50',
-            'result' => 'numeric|max:20',
-            'city' => 'string|max:50',
-            'country' => 'string|max:50',
-            'grad_date' => 'nullable|date',
-            'is_current' => 'required|boolean',
-        ]);
-        
+    public function save(EducationRequest $request, $id)
+    {   
         $user = app('auth_user');
         $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
@@ -50,19 +40,8 @@ class EducationController extends Controller
         return successResponseJson(new EducationResource($data), 'Your education information saved in database');
     }
 
-    public function update(Request $request, $id, $edu_id)
+    public function update(EducationRequest $request, $id, $edu_id)
     {
-        $request->validate([
-            'study_field' => 'required|string|max:50',
-            'degree' => 'required|string|max:50',
-            'institution_name' => 'required|string|max:50',
-            'result' => 'numeric|max:20',
-            'city' => 'string|max:50',
-            'country' => 'string|max:50',
-            'grad_date' => 'nullable|date',
-            'is_current' => 'required|boolean',
-        ]);
-
         $user = app('auth_user');
         $resume = ResumeUser::where(['id' => $id, 'user_id' => $user->id])->firstOrFail();
         

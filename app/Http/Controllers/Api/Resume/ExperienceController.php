@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Resume;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Resume\ExperienceRequest;
 use App\Http\Resources\ExperienceResource;
 use App\Models\Experience;
 use App\Models\ResumeUser;
@@ -21,18 +22,8 @@ class ExperienceController extends Controller
     }
 
 
-    public function save(Request $request, $id)
+    public function save(ExperienceRequest $request, $id)
     {
-        $request->validate([
-            'organization' => 'required|string|max:36',
-            'job_title' => 'required|string|max:60',
-            'responsibilities_achievements' => 'required|string|max:700',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
-            'city' => 'string',
-            'country' => 'string',
-        ]);
-        
         $user = app('auth_user');
         $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
@@ -50,18 +41,8 @@ class ExperienceController extends Controller
     }
 
 
-    public function update(Request $request, $id, $exp_id)
+    public function update(ExperienceRequest $request, $id, $exp_id)
     {
-        $request->validate([
-            'organization' => 'required|string|max:36',
-            'job_title' => 'required|string|max:60',
-            'responsibilities_achievements' => 'required|string|max:700',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
-            'city' => 'string',
-            'country' => 'string',
-        ]);
-
         $user = app('auth_user');
         $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 

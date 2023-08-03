@@ -23,8 +23,8 @@ class SkillRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        // return [
+        //     'skills' => ''
+        // ];
     }
 }
