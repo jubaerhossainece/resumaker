@@ -9,6 +9,8 @@ class Institution extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     public function institutions()
     {
         return $this->morphTo();

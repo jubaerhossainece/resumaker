@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\Api\Resume;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Resume\PersonalInfoRequest;
 use App\Http\Resources\PersonalInfoResource;
-use App\Http\Resources\UserResource;
 use App\Models\PersonalInfo;
 use App\Models\ResumeUser;
 use App\Models\User;
-use App\Rules\PhoneNumber;
 use App\Services\GuestService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -29,22 +27,13 @@ class PersonalInfoController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(PersonalInfoRequest $request)
     {
         $request->validate([
-            'image' => 'nullable|image',
-            'first_name' => 'required|string|max:15',
-            'last_name' => 'required|string|max:15',
-            'profession' => 'required|string|max:60',
-            'email' => 'required|email|max:40',
-            'phone' => [new PhoneNumber(),'max:20'],
-            'city' => 'string|max:60',
-            'country' => 'string|max:60',
-            'post_code' => 'required|string|max:15',
-            'about' => 'required|string|max:500',
-            'social_links' => 'required',
             'template_id' => 'required',
         ]);
+
+        $validated = $request->validated();
 
         //find the user using ip address and device id or create one
         $user = auth('sanctum')->user();
@@ -68,29 +57,16 @@ class PersonalInfoController extends Controller
         $resume->template_id = $request->template_id;
         $resume->save();
 
-        $social_links = json_decode($request->social_links);
-        $personal_info = new PersonalInfo();
-        $personal_info->first_name = $request->first_name;
-        $personal_info->last_name = $request->last_name;
-        $personal_info->email = $request->email;
-        $personal_info->phone = $request->phone;
-        $personal_info->profession = $request->profession;
-        $personal_info->city = $request->city;
-        $personal_info->country = $request->country;
-        $personal_info->post_code = $request->post_code;
-        $personal_info->about = $request->about;
-        $personal_info->social_links = $social_links;
-
         if ($request->hasFile('image')) {
             $path = 'public/resume/userImage';
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $filename_with_ext = Str::random(20).time() . '.' . $extension;
             $request->file('image')->storeAs($path, $filename_with_ext);
-            $personal_info->image = $filename_with_ext;
+            $validated['image'] = $filename_with_ext;
         }
-
-        $resume->personalInfo()->save($personal_info);
+        $resume->personalInfo()->create($validated);
+        
         $data = [
             'guest_id' => $user->guest_id,
             'resume_id' => $resume->id,
@@ -100,38 +76,13 @@ class PersonalInfoController extends Controller
     }
 
 
-    public function update(Request $request, $id, $info_id)
+    public function update(PersonalInfoRequest $request, $id, $info_id)
     {
-        $request->validate([
-            'image' => 'nullable|image',
-            'first_name' => 'required|string|max:15',
-            'last_name' => 'required|string|max:15',
-            'profession' => 'required|string|max:60',
-            'email' => 'required|email|max:40',
-            'phone' => [new PhoneNumber(),'max:20'],
-            'city' => 'string|max:60',
-            'country' => 'string|max:60',
-            'post_code' => 'required|string|max:15',
-            'about' => 'required|string|max:500',
-            'social_links' => 'required',
-        ]);
+        $validated = $request->validated();
 
         $user = app('auth_user');
         $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         $personal_info = $resume->personalInfo()->findOrFail($info_id);
-        
-        $social_links = json_decode($request->social_links);
-        $personal_info = $resume->personalInfo;
-        $personal_info->first_name = $request->first_name;
-        $personal_info->last_name = $request->last_name;
-        $personal_info->email = $request->email;
-        $personal_info->phone = $request->phone;
-        $personal_info->profession = $request->profession;
-        $personal_info->city = $request->city;
-        $personal_info->country = $request->country;
-        $personal_info->post_code = $request->post_code;
-        $personal_info->about = $request->about;
-        $personal_info->social_links = $social_links;
 
         if ($request->hasFile('image')) {
             $path = 'public/resume/userImage';
@@ -146,9 +97,9 @@ class PersonalInfoController extends Controller
                 }
             }
             $request->file('image')->storeAs($path, $filename_with_ext);
-            $personal_info->image = $filename_with_ext;
+            $validated['image'] = $filename_with_ext;
         }        
-        $result = $personal_info->save();
+        $result = $personal_info->update($validated);
 
         if($result){
             return successResponseJson(new PersonalInfoResource($personal_info), 'Your personal information updated');

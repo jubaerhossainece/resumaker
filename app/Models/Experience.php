@@ -9,6 +9,8 @@ class Experience extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     public function experienceable()
     {
         return $this->morphTo();

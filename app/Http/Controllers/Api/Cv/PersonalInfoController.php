@@ -54,30 +54,19 @@ class PersonalInfoController extends Controller
         $cv->user_id = $user->id;
         $cv->template_id = $request->template_id;
         $cv->save();
-
-        $social_links = json_decode($request->social_links);
-
-        $personal_info = new PersonalInfo;
-        $personal_info->first_name = $request->first_name;
-        $personal_info->last_name = $request->last_name;
-        $personal_info->email = $request->email;
-        $personal_info->phone = $request->phone;
-        $personal_info->profession = $request->profession;
-        $personal_info->city = $request->city;
-        $personal_info->country = $request->country;
-        $personal_info->post_code = $request->post_code;
-        $personal_info->about = $request->about;
-        $personal_info->social_links = $social_links;
-
+        
+        $validated = $request->validated();
+        
         if ($request->hasFile('image')) {
             $path = 'public/cv/userImage';
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $filename_with_ext = Str::random(20).time() . '.' . $extension;
             $request->file('image')->storeAs($path, $filename_with_ext);
-            $personal_info->image = $filename_with_ext;
+            $validated['image'] = $filename_with_ext;
         }
-        $info = $cv->personalInfo()->save($personal_info);
+
+        $info = $cv->personalInfo()->create($validated);
  
         $data = [
             'guest_id' => $user->guest_id ?? null,
@@ -91,22 +80,12 @@ class PersonalInfoController extends Controller
 
     public function update(PersonalInfoRequest $request, $id, $info_id)
     {
+        $validated = $request->validated();
+
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $personal_info = $cv->personalInfo()->findOrFail($info_id);
-        
-        $social_links = json_decode($request->social_links);
-        $personal_info->first_name = $request->first_name;
-        $personal_info->last_name = $request->last_name;
-        $personal_info->email = $request->email;
-        $personal_info->phone = $request->phone;
-        $personal_info->profession = $request->profession;
-        $personal_info->city = $request->city;
-        $personal_info->country = $request->country;
-        $personal_info->post_code = $request->post_code;
-        $personal_info->about = $request->about;
-        $personal_info->social_links = $social_links;
 
         if ($request->hasFile('image')) {
             $path = 'public/cv/userImage';
@@ -121,9 +100,9 @@ class PersonalInfoController extends Controller
                 }
             }
             $request->file('image')->storeAs($path, $filename_with_ext);
-            $personal_info->image = $filename_with_ext;
+            $validated['image'] = $filename_with_ext;
         }
-        $result = $personal_info->save();
+        $result = $personal_info->update($validated);
 
         if($result){
             return successResponseJson(new PersonalInfoResource($personal_info), 'Your personal information updated');

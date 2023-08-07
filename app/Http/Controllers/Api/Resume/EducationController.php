@@ -21,21 +21,12 @@ class EducationController extends Controller
     }
 
 
-    public function save(EducationRequest $request, $id)
+    public function store(EducationRequest $request, $id)
     {   
         $user = app('auth_user');
+
         $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
-        
-        $education = new Education();
-        $education->study_field = $request->study_field;
-        $education->degree = $request->degree;
-        $education->institution_name = $request->institution_name;
-        $education->result = $request->result;
-        $education->city = $request->city;
-        $education->country = $request->country;
-        $education->grad_date = $request->grad_date;
-        $education->is_current = $request->is_current;
-        $data = $resume->education()->save($education);
+        $data = $resume->education()->create($request->validated());
         
         return successResponseJson(new EducationResource($data), 'Your education information saved in database');
     }
@@ -46,15 +37,7 @@ class EducationController extends Controller
         $resume = ResumeUser::where(['id' => $id, 'user_id' => $user->id])->firstOrFail();
         
         $education = $resume->education()->findOrFail($edu_id);
-        $education->study_field = $request->study_field;
-        $education->degree = $request->degree;
-        $education->institution_name = $request->institution_name;
-        $education->result = $request->result;
-        $education->city = $request->city;
-        $education->country = $request->country;
-        $education->grad_date = $request->grad_date;
-        $education->is_current = $request->is_current;
-        $result = $education->save();
+        $result = $education->update($request->validated());
         
         if($result){
             return successResponseJson(new EducationResource($education), 'Your education information updated in database');

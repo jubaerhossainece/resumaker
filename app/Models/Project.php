@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Certification extends Model
+class Project extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function certifiable()
-    {
-        return $this->morphTo(__FUNCTION__, 'certifiable_type', 'certifiable_id');
+    public function projects(){
+        return $this->morphTo();
     }
 }

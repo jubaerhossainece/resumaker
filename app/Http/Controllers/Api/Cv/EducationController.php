@@ -20,44 +20,21 @@ class EducationController extends Controller
     }
 
 
-    public function save(EducationRequest $request, $id)
+    public function store(EducationRequest $request, $id)
     {
-        $request->validated();
-        
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id, 'user_id' => $user->id])->firstOrFail();
-        
-        $education = new Education();
-        $education->study_field = $request->study_field;
-        $education->degree = $request->degree;
-        $education->institution_name = $request->institution_name;
-        $education->result = $request->result;
-        $education->city = $request->city;
-        $education->country = $request->country;
-        $education->grad_date = $request->grad_date;
-        $education->is_current = $request->is_current;
-        $data = $cv->education()->save($education);
+        $data = $cv->education()->create($request->validated());
 
         return successResponseJson(new EducationResource($data), 'Your education information saved in database');
     }
 
     public function update(EducationRequest $request, $id, $edu_id)
     {
-        $request->validated();
-
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
-        
         $education = $cv->education()->findOrFail($edu_id);
-        $education->study_field = $request->study_field;
-        $education->degree = $request->degree;
-        $education->institution_name = $request->institution_name;
-        $education->result = $request->result;
-        $education->city = $request->city;
-        $education->country = $request->country;
-        $education->grad_date = $request->grad_date;
-        $education->is_current = $request->is_current;
-        $result = $education->save();
+        $result = $education->update($request->validated());
 
         if($result){
             return successResponseJson(new EducationResource($education), 'Your education information updated in database');

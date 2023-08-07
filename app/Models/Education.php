@@ -9,6 +9,8 @@ class Education extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     public function educationable()
     {
         return $this->morphTo();

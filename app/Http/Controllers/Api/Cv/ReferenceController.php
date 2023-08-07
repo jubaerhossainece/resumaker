@@ -19,18 +19,12 @@ class ReferenceController extends Controller
     }
 
 
-    public function save(ReferenceRequest $request, $id)
+    public function store(ReferenceRequest $request, $id)
     {
         $user = app('auth_user');
-        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
-        $reference = new Reference();
-        $reference->name = $request->name;
-        $reference->current_organization = $request->current_organization;
-        $reference->designation = $request->designation;
-        $reference->phone = $request->phone;
-        $reference->email = $request->email;
-        $data = $cv->references()->save($reference);
+        $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
+        $data = $cv->references()->create($request->validated());
 
         return successResponseJson(new ReferenceResource($data), 'Your reference information saved in database');
     }
@@ -42,12 +36,7 @@ class ReferenceController extends Controller
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $reference = $cv->references()->findOrFail($ref_id);
-        $reference->name = $request->name;
-        $reference->current_organization = $request->current_organization;
-        $reference->designation = $request->designation;
-        $reference->phone = $request->phone;
-        $reference->email = $request->email;
-        $result = $reference->save();
+        $result = $reference->update($request->validated());
  
         if($result){
             return successResponseJson(new ReferenceResource($reference), 'Your reference information updated');

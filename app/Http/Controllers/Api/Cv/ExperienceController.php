@@ -20,21 +20,11 @@ class ExperienceController extends Controller
     }
 
 
-    public function save(ExperienceRequest $request, $id)
+    public function store(ExperienceRequest $request, $id)
     {
-        $request->validated();
-        
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
-        $experience = new Experience();
-        $experience->organization = $request->organization;
-        $experience->job_title = $request->job_title;
-        $experience->responsibilities_achievements = $request->responsibilities_achievements;
-        $experience->start_date = $request->start_date;
-        $experience->end_date = $request->end_date;
-        $experience->city = $request->city;
-        $experience->country = $request->country;
-        $data = $cv->experiences()->save($experience);
+        $data = $cv->experiences()->create($request->validated());
 
         return successResponseJson(new ExperienceResource($data), 'Your experience information saved in database');
     }
@@ -42,20 +32,11 @@ class ExperienceController extends Controller
 
     public function update(ExperienceRequest $request, $id, $exp_id)
     {
-        $request->validated();
-
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $experience = $cv->experiences()->findOrFail($exp_id);
-        $experience->organization = $request->organization;
-        $experience->job_title = $request->job_title;
-        $experience->responsibilities_achievements = $request->responsibilities_achievements;
-        $experience->start_date = $request->start_date;
-        $experience->end_date = $request->end_date;
-        $experience->city = $request->city;
-        $experience->country = $request->country;
-        $result = $experience->save();
+        $result = $experience->update($request->validated());
 
         if($result){
             return successResponseJson(new ExperienceResource($experience), 'Your experience information updated in database');

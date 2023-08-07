@@ -23,7 +23,7 @@ class SkillController extends Controller
     }
 
 
-    public function save(Request $request, $id)
+    public function store(Request $request, $id)
     {
         $request->validate([
             'skill' => 'required|array',

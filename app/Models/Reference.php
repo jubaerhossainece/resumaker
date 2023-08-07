@@ -9,6 +9,8 @@ class Reference extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     public function referenceable()
     {
         return $this->morphTo();

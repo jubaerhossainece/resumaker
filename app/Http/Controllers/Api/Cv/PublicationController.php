@@ -20,19 +20,12 @@ class PublicationController extends Controller
     }
 
 
-    public function save(PublicationRequest $request, $id)
+    public function store(PublicationRequest $request, $id)
     {
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
-        $publication = new Publication();
-        $publication->publication_title = $request->publication_title;
-        $publication->publisher = $request->publisher;
-        $publication->published_in = $request->published_in;
-        $publication->publication_url = $request->publication_url;
-        $publication->publication_date = $request->publication_date;
-        $publication->description = $request->description;
-        $data = $cv->publications()->save($publication);
+        $data = $cv->publications()->create($request->validated());
 
         return successResponseJson(new PublicationResource($data), 'Your publication information saved in database');
     }
@@ -44,13 +37,7 @@ class PublicationController extends Controller
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $publication = $cv->publications()->findOrFail($pub_id);
-        $publication->publication_title = $request->publication_title;
-        $publication->publisher = $request->publisher;
-        $publication->published_in = $request->published_in;
-        $publication->publication_url = $request->publication_url;
-        $publication->publication_date = $request->publication_date;
-        $publication->description = $request->description;
-        $result = $publication->save();
+        $result = $publication->update($request->validated());
 
         if($result){
             return successResponseJson(new PublicationResource($publication), 'Your publication information updated');

@@ -16,25 +16,17 @@ class AwardController extends Controller
     public function get($id)
     {
         $user = app('auth_user');
-        
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->with('awards')->firstOrFail();
+        
         return successResponseJson(AwardResource::Collection($cv->awards));
     }
 
 
-    public function save(AwardRequest $request, $id)
+    public function store(AwardRequest $request, $id)
     {
-        $request->validated();
-
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
-        
-        $award = new Award();
-        $award->award_name = $request->award_name;
-        $award->award_details = $request->award_details;
-        $award->awarded_by = $request->awarded_by;
-        $award->awarded_date = $request->awarded_date;
-        $data = $cv->awards()->save($award);
+        $data = $cv->awards()->create($request->validated());
 
         return successResponseJson(new AwardResource($data), 'Your award information saved in database');
     }
@@ -42,23 +34,15 @@ class AwardController extends Controller
 
     public function update(AwardRequest $request, $id, $award_id)
     {
-        $request->validated();
-        
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $award = $cv->awards()->findOrFail($award_id);
-        
-        $award->award_name = $request->award_name;
-        $award->award_details = $request->award_details;
-        $award->awarded_by = $request->awarded_by;
-        $award->awarded_date = $request->awarded_date;
-        $result = $award->save();
+        $result = $award->update($request->validated());
 
         if($result){
             return successResponseJson(new AwardResource($award), 'Your award information updated');
         }
-        
         return errorResponseJson('Something went wrong', 500);
 
     }

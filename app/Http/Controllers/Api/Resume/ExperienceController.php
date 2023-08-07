@@ -22,20 +22,12 @@ class ExperienceController extends Controller
     }
 
 
-    public function save(ExperienceRequest $request, $id)
+    public function store(ExperienceRequest $request, $id)
     {
         $user = app('auth_user');
         $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
-        $experience = new Experience();
-        $experience->organization = $request->organization;
-        $experience->job_title = $request->job_title;
-        $experience->responsibilities_achievements = $request->responsibilities_achievements;
-        $experience->start_date = $request->start_date;
-        $experience->end_date = $request->end_date;
-        $experience->city = $request->city;
-        $experience->country = $request->country;
-        $data = $resume->experiences()->save($experience);
+        $data = $resume->experiences()->create($request->validated());
 
         return successResponseJson(new ExperienceResource($data), 'Your experience information saved in database');
     }
@@ -47,14 +39,7 @@ class ExperienceController extends Controller
         $resume = ResumeUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
 
         $experience = $resume->experiences()->findOrFail($exp_id);
-        $experience->organization = $request->organization;
-        $experience->job_title = $request->job_title;
-        $experience->responsibilities_achievements = $request->responsibilities_achievements;
-        $experience->start_date = $request->start_date;
-        $experience->end_date = $request->end_date;
-        $experience->city = $request->city;
-        $experience->country = $request->country;
-        $result = $experience->save();
+        $result = $experience->update($request->validated());
 
         if($result){
             return successResponseJson(new ExperienceResource($experience), 'Your experience information updated');

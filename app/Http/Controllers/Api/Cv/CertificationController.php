@@ -20,21 +20,11 @@ class CertificationController extends Controller
     }
 
 
-    public function save(CertificationRequest $request, $id)
+    public function store(CertificationRequest $request, $id)
     {
-        $request->validated();
-        
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
-        
-        $certification = new Certification();
-        $certification->name = $request->name;
-        $certification->issuing_org = $request->issuing_org;
-        $certification->credential_url = $request->credential_url;
-        $certification->issue_date = $request->issue_date;
-        $certification->exp_date = $request->exp_date;
-        $certification->is_no_exp = $request->is_no_exp;
-        $data = $cv->certifications()->save($certification);
+        $data = $cv->certifications()->create($request->validated());
         
         return successResponseJson(new CertificationResource($data), 'Your certification information saved in database');
     }
@@ -42,24 +32,15 @@ class CertificationController extends Controller
 
     public function update(CertificationRequest $request, $id, $cert_id)
     {
-        $request->validated();
-
         $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->firstOrFail();
         
         $certification = $cv->certifications()->findOrFail($cert_id);
-        $certification->name = $request->name;
-        $certification->issuing_org = $request->issuing_org;
-        $certification->credential_url = $request->credential_url;
-        $certification->issue_date = $request->issue_date;
-        $certification->exp_date = $request->exp_date;
-        $certification->is_no_exp = $request->is_no_exp;
-        $result = $certification->save();
+        $result = $certification->update($request->validated());
 
         if($result){
             return successResponseJson(new CertificationResource($certification), 'Your certification information updated in database');
         }
-
         return errorResponseJson('Something went wrong', 500);
     }
 

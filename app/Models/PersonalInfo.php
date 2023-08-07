@@ -9,6 +9,8 @@ class PersonalInfo extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     protected $casts = [
         'social_links' => 'array'
     ];

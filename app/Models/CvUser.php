@@ -28,6 +28,10 @@ class CvUser extends Model
         return $this->morphMany(Education::class, 'educationable');
     }
 
+    function projects() {
+        return $this->morphMany(Project::class, 'projectable');
+    }
+
     public function certifications()
     {
         return $this->morphMany(Certification::class, 'certifiable');
