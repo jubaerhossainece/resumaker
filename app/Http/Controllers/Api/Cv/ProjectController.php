@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Cv\ProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\CvUser;
-use App\Models\Project;
-use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
@@ -18,7 +16,7 @@ class ProjectController extends Controller
      */
     public function get($id)
     {
-        return $user = app('auth_user');
+        $user = app('auth_user');
         $cv = CvUser::where(['id' => $id,'user_id' => $user->id])->with('projects')->firstOrFail();
         
         return successResponseJson(ProjectResource::Collection($cv->projects));

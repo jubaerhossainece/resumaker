@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Cv\EducationRequest;
 use App\Http\Resources\EducationResource;
 use App\Models\CvUser;
-use App\Models\Education;
-use Illuminate\Http\Request;
 
 class EducationController extends Controller
 {

@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Api\Cv;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Cv\CertificationRequest;
 use App\Http\Resources\CertificationResource;
-use App\Models\Certification;
 use App\Models\CvUser;
-use App\Rules\ValidUrl;
-use Illuminate\Http\Request;
 
 class CertificationController extends Controller
 {

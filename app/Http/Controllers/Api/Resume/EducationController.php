@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Api\Resume;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Resume\EducationRequest;
 use App\Http\Resources\EducationResource;
-use App\Models\Education;
 use App\Models\ResumeUser;
-use Illuminate\Http\Request;
-use stdClass;
 
 class EducationController extends Controller
 {

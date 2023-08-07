@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Cv;
 
 use App\Http\Controllers\Controller;
 use App\Models\CvUser;
-use App\Services\GuestService;
 use Illuminate\Http\Request;
 
 class TemplateController extends Controller

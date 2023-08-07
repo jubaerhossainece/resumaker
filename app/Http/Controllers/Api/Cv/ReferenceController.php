@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Cv\ReferenceRequest;
 use App\Http\Resources\ReferenceResource;
 use App\Models\CvUser;
-use App\Models\Reference;
-use Illuminate\Http\Request;
 
 class ReferenceController extends Controller
 {

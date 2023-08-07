@@ -5,11 +5,7 @@ namespace App\Http\Controllers\Api\Cv;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Cv\AwardRequest;
 use App\Http\Resources\AwardResource;
-use App\Models\Award;
 use App\Models\CvUser;
-use App\Models\User;
-use App\Services\GuestService;
-use Illuminate\Http\Request;
 
 class AwardController extends Controller
 {

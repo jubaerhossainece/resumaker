@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Cv\PublicationRequest;
 use App\Http\Resources\PublicationResource;
 use App\Models\CvUser;
-use App\Models\Publication;
-use Illuminate\Http\Request;
 
 class PublicationController extends Controller
 {

@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Cv\ExperienceRequest;
 use App\Http\Resources\ExperienceResource;
 use App\Models\CvUser;
-use App\Models\Experience;
-use Illuminate\Http\Request;
 
 class ExperienceController extends Controller
 {

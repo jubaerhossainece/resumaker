@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Resume;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Resume\PersonalInfoRequest;
 use App\Http\Resources\PersonalInfoResource;
-use App\Models\PersonalInfo;
 use App\Models\ResumeUser;
 use App\Models\User;
 use App\Services\GuestService;

@@ -9,7 +9,6 @@ use App\Models\ResumeUser;
 use App\Models\Skill;
 use App\Models\Technology;
 use Illuminate\Http\Request;
-use stdClass;
 
 class SkillController extends Controller
 {
