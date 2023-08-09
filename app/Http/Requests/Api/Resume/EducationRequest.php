@@ -30,7 +30,7 @@ class EducationRequest extends FormRequest
             'result' => 'nullable|numeric|max:20',
             'city' => 'nullable|string|max:50',
             'country' => 'nullable|string|max:50',
-            'grad_date' => 'nullable|date_format:Y-m-d',
+            'grad_date' => 'required|date_format:Y-m-d',
             'is_current' => 'required|boolean',
         ];
     }

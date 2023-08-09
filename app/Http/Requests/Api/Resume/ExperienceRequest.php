@@ -26,7 +26,7 @@ class ExperienceRequest extends FormRequest
         return [
             'organization' => 'required|string|max:36',
             'job_title' => 'required|string|max:60',
-            'responsibilities_achievements' => 'required|string|max:700',
+            'responsibilities_achievements' => 'nullable|required|string|max:700',
             'start_date' => 'required|date_format:Y-m-d',
             'end_date' => 'nullable|date_format:Y-m-d',
             'city' => 'nullable|string',

@@ -29,7 +29,7 @@ class ReferenceRequest extends FormRequest
             'current_organization' => 'required|string|max:50',
             'designation' => 'required|string|max:60',
             'phone' => ['nullable', new PhoneNumber(), 'max:20'],
-            'email' => 'nullable|email',
+            'email' => 'required|email',
         ];
     }
 }

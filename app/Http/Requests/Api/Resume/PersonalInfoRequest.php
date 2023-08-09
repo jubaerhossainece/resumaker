@@ -39,12 +39,12 @@ class PersonalInfoRequest extends FormRequest
             'last_name' => 'required|string|max:15',
             'profession' => 'required|string|max:60',
             'email' => 'required|email|max:40',
-            'phone' => [new PhoneNumber(),'max:20'],
+            'phone' => ['nullable', new PhoneNumber(),'max:20'],
             'city' => 'nullable|string|max:60',
             'country' => 'nullable|string|max:60',
-            'post_code' => 'required|string|max:15',
+            'post_code' => 'nullable|required|string|max:15',
             'about' => 'required|string|max:500',
-            'social_links' => 'required',
+            'social_links' => 'nullable|required',
         ];
     }
 }
