@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\TemplateController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -51,4 +54,8 @@ Route::group(['middleware' => ['auth','2fa']],function(){
     Route::get('/2fa-settings', [SettingController::class, 'index']);
 
     Route::get('/2fa-status-change/{status}', [SettingController::class,'enableOrDisable2fa'])->name('google2faStatusChange');
+    Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/admins', [AdminController::class, 'index'])->name('admins.index');
+
 });

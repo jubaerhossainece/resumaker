@@ -1,0 +1,77 @@
+#wrapper .navbar-custom{
+    background-color: white;
+}
+
+.content-page .content .container-fluid .row{
+    margin-top: 25px;
+}
+
+.content-page .content .container-fluid .row .card-header{
+    background-color: white;
+}
+
+#sidebar-menu>ul>li>a {
+    padding: 9px 19px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+#sidebar-menu>ul>li>a svg {
+    margin-right: 10px;
+}
+
+#sidebar-menu>ul>li>a.active {
+    color: #FF7800;
+    background: #FFEFE0;
+}
+
+#sidebar-menu>ul>li>a.active svg *{
+    fill: #FF7800 !important;
+    stroke: #FF7800 !important;
+}
+
+#sidebar-menu>ul>li>a:hover {
+    color: #FF7800;
+    background: #FFEFE0;
+}
+
+.colored-svg {
+    filter: hue-rotate(0deg); /* Change the hue rotation value for the desired color */
+}
+
+.metismenu li a:is(:hover) svg *{
+    fill: #FF7800 !important;
+    stroke: #FF7800 !important;
+}
+
+.left-side-menu .slimScrollDiv{
+	position: relative;
+}
+
+.left-side-menu .logout {
+    position: absolute;
+    bottom: 21px;
+    right: 0;
+    left: 0;
+}
+
+.left-side-menu .logout {
+    position: absolute;
+    bottom: 21px;
+    right: 0;
+    left: 0;
+}
+
+.left-side-menu .logout a{
+    display: block;
+    width: 100%;
+    color: #444;
+    padding: 9px 19px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.left-side-menu .logout a:hover {
+    color: #FF7800;
+    background: #FFEFE0;
+}

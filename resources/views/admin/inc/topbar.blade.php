@@ -2,70 +2,7 @@
 <div class="navbar-custom">
     <ul class="list-unstyled topnav-menu float-right mb-0">
 
-        <li class="dropdown notification-list d-none d-md-inline-block">
-            <a href="#" id="btn-fullscreen" class="nav-link waves-effect waves-light">
-                <i class="mdi mdi-crop-free noti-icon"></i>
-            </a>
-        </li>
-
-        <li class="dropdown notification-list">
-            <a class="nav-link dropdown-toggle  waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                <i class="mdi mdi-bell noti-icon"></i>
-                <span class="badge badge-danger rounded-circle noti-icon-badge">0</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right dropdown-lg">
-
-                <!-- item-->
-                <div class="dropdown-item noti-title">
-                    <h5 class="font-16 m-0">
-                                    <span class="float-right">
-                                        <a href="" class="text-dark">
-                                            <small>Clear All</small>
-                                        </a>
-                                    </span>Notification
-                    </h5>
-                </div>
-
-                <div class="slimscroll noti-scroll">
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon">
-                            <i class="fa fa-user-plus text-info"></i>
-                        </div>
-                        <p class="notify-details">New user registered
-                            <small class="noti-time">You have 10 unread messages</small>
-                        </p>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon text-success">
-                            <i class="far fa-gem text-primary"></i>
-                        </div>
-                        <p class="notify-details">New settings
-                            <small class="noti-time">There are new settings available</small>
-                        </p>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon text-danger">
-                            <i class="far fa-bell text-danger"></i>
-                        </div>
-                        <p class="notify-details">Updates
-                            <small class="noti-time">There are 2 new updates available</small>
-                        </p>
-                    </a>
-                </div>
-
-                <!-- All-->
-                <a href="javascript:void(0);" class="dropdown-item text-center notify-item notify-all">
-                    See all notifications
-                </a>
-
-            </div>
-        </li>
+       
 
         <li class="dropdown notification-list">
             <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
@@ -108,7 +45,7 @@
     <div class="logo-box">
         <a href="{{ \App\Providers\RouteServiceProvider::HOME }}" class="logo text-center logo-dark">
                             <span class="logo-lg">
-                                <img src="assets/images/logo-dark.png" alt="" height="16">
+                                <img src="{{asset('assets/images/logo.png')}}" alt="" height="16">
                                 <!-- <span class="logo-lg-text-dark">Moltran</span> -->
                             </span>
             <span class="logo-sm">
@@ -119,7 +56,7 @@
 
         <a href="{{ \App\Providers\RouteServiceProvider::HOME }}" class="logo text-center logo-light">
                             <span class="logo-lg">
-                                <img src="assets/images/logo-light.png" alt="" height="16">
+                                <img src="assets/images/logo.png" alt="" height="16">
                                 <!-- <span class="logo-lg-text-dark">Moltran</span> -->
                             </span>
             <span class="logo-sm">

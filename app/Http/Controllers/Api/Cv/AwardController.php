@@ -43,6 +43,13 @@ class AwardController extends Controller
 
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param int $id
+     * @param int $award_id
+     * @return void
+     */
     public function destroy($id, $award_id)
     {
         $user = app('auth_user');
