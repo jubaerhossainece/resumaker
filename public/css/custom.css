@@ -75,3 +75,13 @@
     color: #FF7800;
     background: #FFEFE0;
 }
+
+.left-side-menu .logout a svg{
+    margin-right: 10px;
+}
+
+
+.left-side-menu .logout a:is(:hover) svg *{
+    fill: #FF7800 !important;
+    stroke: #FF7800 !important;
+}

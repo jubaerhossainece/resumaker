@@ -14,6 +14,8 @@
 
     <!-- App css -->
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-stylesheet" />
     <link rel="stylesheet" href="{{ asset('/css/custom.css') }}">
@@ -73,6 +75,9 @@
 
 <!-- App js -->
 <script src="{{ asset('assets/js/app.min.js') }}"></script>
+
+<!-- yajra datatables js -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
 @stack('scripts')
 

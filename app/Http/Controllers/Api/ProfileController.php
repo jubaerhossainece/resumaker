@@ -20,7 +20,6 @@ class ProfileController extends Controller
 
     public function updateProfile(ProfileRequest $request)
     {
-
         $request->validated();
 
         $user = auth('sanctum')->user();
@@ -29,13 +28,16 @@ class ProfileController extends Controller
         $user->email = $request->email;
 
         if ($request->hasFile('image')) {
-            $path = 'public/organization';
+            $path = 'organization';
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $filename_with_ext = time() . '.' . $extension;
             if ($user->image) {
-                Storage::delete('public/organization/' . $user->photo);
+                Storage::disk('public')->delete('organization/' . $user->photo);
             }
+            $request->file('image')->storeAs(
+                $path, $filename_with_ext, 'public'
+            );
             $request->file('image')->storeAs($path, $filename_with_ext);
             $user->image = $filename_with_ext;
         }
