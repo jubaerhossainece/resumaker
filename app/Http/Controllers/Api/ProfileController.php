@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ProfileRequest;
 use App\Http\Resources\UserResource;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    protected $fileService;
+    
+    public function __construct()
+    {
+        $this->fileService = new ImageService();
+    }
+
     public function myInfo()
     {
         $user = auth('sanctum')->user();
@@ -28,18 +36,8 @@ class ProfileController extends Controller
         $user->email = $request->email;
 
         if ($request->hasFile('image')) {
-            $path = 'organization';
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $filename_with_ext = time() . '.' . $extension;
-            if ($user->image) {
-                Storage::disk('public')->delete('organization/' . $user->photo);
-            }
-            $request->file('image')->storeAs(
-                $path, $filename_with_ext, 'public'
-            );
-            $request->file('image')->storeAs($path, $filename_with_ext);
-            $user->image = $filename_with_ext;
+            $filename = $this->fileService->upload($request->file('image'),'organization', $user->image, 'public');
+            $user->image = $filename;
         }
 
         $user->save();

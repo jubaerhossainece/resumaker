@@ -9,10 +9,17 @@ use App\Models\CvUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use App\Services\GuestService;
+use App\Services\ImageService;
 use Illuminate\Support\Str;
 
 class PersonalInfoController extends Controller
 {
+    protected $fileService;
+
+    public function __construct()
+    {
+        $this->fileService = new ImageService();
+    }
     public function get($id)
     {
         $user = app('auth_user');
@@ -56,12 +63,8 @@ class PersonalInfoController extends Controller
         $validated = $request->validated();
         
         if ($request->hasFile('image')) {
-            $path = 'public/cv/userImage';
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $filename_with_ext = Str::random(20).time() . '.' . $extension;
-            $request->file('image')->storeAs($path, $filename_with_ext);
-            $validated['image'] = $filename_with_ext;
+            $filename = $this->fileService->upload($request->file('image'),'cv/userImage', null, 'public');
+            $validated['image'] = $filename;
         }
 
         $info = $cv->personalInfo()->create($validated);
@@ -86,19 +89,8 @@ class PersonalInfoController extends Controller
         $personal_info = $cv->personalInfo()->findOrFail($info_id);
 
         if ($request->hasFile('image')) {
-            $path = 'public/cv/userImage';
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $filename_with_ext = Str::random(20).time() . '.' . $extension;
-
-            // delete previous image
-            if (isset($personal_info->image)) {
-                if(Storage::exists($path .'/'. $personal_info->image)){
-                    Storage::delete($path.'/'.$personal_info->image);
-                }
-            }
-            $request->file('image')->storeAs($path, $filename_with_ext);
-            $validated['image'] = $filename_with_ext;
+            $filename = $this->fileService->upload($request->file('image'),'cv/userImage', $personal_info->image, 'public');
+            $validated['image'] = $filename;
         }
         $result = $personal_info->update($validated);
 
