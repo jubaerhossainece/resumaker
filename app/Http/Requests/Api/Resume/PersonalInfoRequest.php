@@ -42,7 +42,7 @@ class PersonalInfoRequest extends FormRequest
             'phone' => ['nullable', new PhoneNumber(),'max:20'],
             'city' => 'nullable|string|max:60',
             'country' => 'nullable|string|max:60',
-            'post_code' => 'nullable|required|string|max:15',
+            'post_code' => 'nullable|string|max:15',
             'about' => 'required|string|max:500',
             'social_links' => ['nullable','max_array_length:5']
         ];
