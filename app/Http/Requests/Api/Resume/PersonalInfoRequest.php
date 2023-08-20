@@ -44,7 +44,13 @@ class PersonalInfoRequest extends FormRequest
             'country' => 'nullable|string|max:60',
             'post_code' => 'nullable|required|string|max:15',
             'about' => 'required|string|max:500',
-            'social_links' => 'nullable|required',
+            'social_links' => ['nullable','max_array_length:5']
+        ];
+    }
+
+    public function messages(){
+        return [
+            'social_links.max_array_length' => 'You can not add more than 5 social links'
         ];
     }
 }
